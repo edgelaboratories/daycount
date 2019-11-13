@@ -55,7 +55,7 @@ func (d Convention) String() string {
 		"ActualThreeSixty",
 		"ActualThreeSixtyFiveFixed",
 		"ThirtyThreeSixtyUS",
-		"ThirtyThreeSixtyEuroBond",
+		"ThirtyThreeSixtyEuropean",
 		"ThirtyThreeSixtyItalian",
 		"ThirtyThreeSixtyGerman",
 	}[d]
