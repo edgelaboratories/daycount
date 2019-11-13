@@ -4,34 +4,37 @@ package daycount
 type Convention int
 
 const (
-	// ActualActual is an actual/actual convention
-	// This convention splits up the actual number of days falling in leap years and in non-leap years.
+	// ActualActual is commonly used for all sterling bonds, Euro denominated bonds, US Treasury bonds and
+	// for some USD interest rate swaps.
+	// In this case, the day-count fraction is the number of days in the period in a normal year over 365
+	// or the number of days in the period in a leap year over 366.
+	ActualActual Convention = iota
+	// ActualActualISDA accounts for days in the period based on the portion in a leap year and the portion
+	// in a non-leap year.
 	// The year fraction is the sum of the actual number of days falling in leap years divided by 366 and the
 	// actual number of days falling in non-leap years divided by 365.
-	ActualActual Convention = iota
-	// ActualActualISDA is the actual/actual ISDA convention
 	ActualActualISDA
 	// ActualActualAFB is the actual/actual AFB convention
 	// This method first calculates the number of full years counting backwards from the second date.
 	// For any resulting stub periods, the numerator is the actual number of days in the period, the denominator
 	// being 365 or 366 depending on whether February 29th falls in the stub period.
 	ActualActualAFB
-	// ActualThreeSixty is the actual/360 convention
-	// The actual number of days between two dates is used as the numerator.
-	// The denominator is always 360 days.
+	// ActualThreeSixty is commonly used for all Eurocurrency LIBOR rates, except sterling.
+	// The day count fraction is defined as the actual number of days in the period over 360.
 	ActualThreeSixty
-	// ActualThreeSixtyFiveFixed is the actual/365 fixed convention
-	// The numerator is the actual number of days between the two dates.
-	// The denominator is always 365 days.
+	// ActualThreeSixtyFiveFixed is commonly used for all sterling interest rates, including LIBOR.
+	// The day count fraction is defined as the actual number of days in the period over 365.
+	// It is also used for money markets in Australia, Canada and New Zealand.
 	ActualThreeSixtyFiveFixed
-	// ThirtyThreeSixtyUSNASD is the 30/360 US (NASD) convention
+	// ThirtyThreeSixtyUS is commonly used for corporate bonds, municipal bonds, and agency bonds in the U.S.
 	// If the first date falls on the 31st, it is changed to the 30th.
 	// If the second date falls on the 31st and the first date is earlier than the 30th, then the second date is
 	// changed to the 1st of the next month, otherwise it is changed to the 30th.
-	ThirtyThreeSixtyUSNASD
-	// ThirtyThreeSixtyEuropean is the 30/360 European convention
-	// If the first date falls on the 31st, it is changed to the 30th.
-	// If the second date falls on the 31th, it is changed to the 30th.
+	ThirtyThreeSixtyUS
+	// ThirtyThreeSixtyEuropean is used for calculating accrued interest on some legacy currency pre Euro
+	// Eurobonds and on bonds in Sweden and Switzerland.
+	// This method assumes that all months have 30 days, even February, and that a year is 360 days.
+	// Effectively if the start date d1 is 31 then it changes to 30, and if the second date d2 is 31 it too changes to 30.
 	ThirtyThreeSixtyEuropean
 	// ThirtyThreeSixtyItalian is the 30/360 Italian convention
 	// If the first date falls on the 31st or if it is February 28th or 29th, then it is changed to the 30th.
@@ -51,8 +54,8 @@ func (d Convention) String() string {
 		"ActualActualAFB",
 		"ActualThreeSixty",
 		"ActualThreeSixtyFiveFixed",
-		"ThirtyThreeSixtyUSNASD",
-		"ThirtyThreeSixtyEuropean",
+		"ThirtyThreeSixtyUS",
+		"ThirtyThreeSixtyEuroBond",
 		"ThirtyThreeSixtyItalian",
 		"ThirtyThreeSixtyGerman",
 	}[d]

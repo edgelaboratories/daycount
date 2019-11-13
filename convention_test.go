@@ -32,8 +32,8 @@ func TestConventionString(t *testing.T) {
 			ActualThreeSixtyFiveFixed,
 		},
 		{
-			"ThirtyThreeSixtyUSNASD",
-			ThirtyThreeSixtyUSNASD,
+			"ThirtyThreeSixtyUS",
+			ThirtyThreeSixtyUS,
 		},
 		{
 			"ThirtyThreeSixtyEuropean",
