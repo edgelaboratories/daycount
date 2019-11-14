@@ -23,11 +23,11 @@ func YearFractionDiff(from, to date.Date, convention Convention) float64 {
 	case ThirtyThreeSixtyUS:
 		return yearFractionThirtyThreeSixtyUS(from, to)
 	case ThirtyThreeSixtyEuropean:
-		return 0.0
+		return yearFractionThirtyThreeSixtyEuropean(from, to)
 	case ThirtyThreeSixtyItalian:
-		return 0.0
+		return yearFractionThirtyThreeSixtyItalian(from, to)
 	case ThirtyThreeSixtyGerman:
-		return 0.0
+		return yearFractionThirtyThreeSixtyGerman(from, to)
 	default:
 		return yearFractionActualActual(from, to)
 	}
@@ -74,7 +74,6 @@ func yearFractionActualActualAFB(from, to date.Date) float64 {
 			remaining = tmp
 		}
 	}
-
 	den := threeSixtyFiveDays
 	if isLeapYear(remaining.Year()) {
 		date := date.New(remaining.Year(), time.February, 29)
@@ -100,19 +99,6 @@ func yearFractionActualThreeSixty(from, to date.Date) float64 {
 	return float64(to.Sub(from)) / threeSixtyDays
 }
 
-func yearFractionThirtyThreeSixtyUS(from, to date.Date) float64 {
-	if from == to {
-		return 0.0
-	}
-	if from.After(to) {
-		return -yearFractionThirtyThreeSixtyUS(to, from)
-	}
-	yearDiff := float64(360 * (to.Year() - from.Year()))
-	monthDiff := float64(30 * (to.Month() - from.Month() - 1))
-	dayDiff := math.Max(0, float64(30-from.Day())) + math.Min(30, float64(to.Day()))
-	return (yearDiff + monthDiff + dayDiff) / threeSixtyDays
-}
-
 func yearFractionActualThreeSixtyFiveFixed(from, to date.Date) float64 {
 	if from == to {
 		return 0.0
@@ -121,6 +107,62 @@ func yearFractionActualThreeSixtyFiveFixed(from, to date.Date) float64 {
 		return -yearFractionActualThreeSixtyFiveFixed(to, from)
 	}
 	return float64(to.Sub(from)) / threeSixtyFiveDays
+}
+
+func yearFractionThirtyThreeSixtyUS(from, to date.Date) float64 {
+	if to.Day() == 31 && from.Day() < 30 {
+		to.AddDate(0, 1, 1)
+	}
+	return yearFractionThirtyThreeSixty(from, to)
+}
+
+func yearFractionThirtyThreeSixtyEuropean(from, to date.Date) float64 {
+	if from == to {
+		return 0.0
+	}
+	if from.After(to) {
+		return -yearFractionThirtyThreeSixtyEuropean(to, from)
+	}
+	return yearFractionThirtyThreeSixty(from, to)
+}
+
+func yearFractionThirtyThreeSixtyItalian(from, to date.Date) float64 {
+	if from == to {
+		return 0.0
+	}
+	if from.After(to) {
+		return -yearFractionThirtyThreeSixtyItalian(to, from)
+	}
+	cap := func(d date.Date) date.Date {
+		if d.Month() == time.February && d.Day() > 27 {
+			return date.New(d.Year(), d.Month(), 30)
+		}
+		return d
+	}
+	return yearFractionThirtyThreeSixty(cap(from), cap(to))
+}
+
+func yearFractionThirtyThreeSixtyGerman(from, to date.Date) float64 {
+	if from == to {
+		return 0.0
+	}
+	if from.After(to) {
+		return -yearFractionThirtyThreeSixtyGerman(to, from)
+	}
+	cap := func(d date.Date) date.Date {
+		if tmp := d.AddDate(0, 0, 1); tmp.Month() == time.March && tmp.Day() == 1 {
+			return date.New(d.Year(), d.Month(), 30)
+		}
+		return d
+	}
+	return yearFractionThirtyThreeSixty(cap(from), cap(to))
+}
+
+func yearFractionThirtyThreeSixty(from, to date.Date) float64 {
+	yearDiff := float64(360 * (to.Year() - from.Year()))
+	monthDiff := float64(30 * (to.Month() - from.Month() - 1))
+	dayDiff := math.Max(0, float64(30-from.Day())) + math.Min(30, float64(to.Day()))
+	return (yearDiff + monthDiff + dayDiff) / threeSixtyDays
 }
 
 func isLeapYear(year int) bool {
