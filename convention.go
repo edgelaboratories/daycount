@@ -9,11 +9,6 @@ const (
 	// In this case, the day-count fraction is the number of days in the period in a normal year over 365
 	// or the number of days in the period in a leap year over 366.
 	ActualActual Convention = iota
-	// ActualActualISDA accounts for days in the period based on the portion in a leap year and the portion
-	// in a non-leap year.
-	// The year fraction is the sum of the actual number of days falling in leap years divided by 366 and the
-	// actual number of days falling in non-leap years divided by 365.
-	ActualActualISDA
 	// ActualActualAFB is the actual/actual AFB convention
 	// This method first calculates the number of full years counting backwards from the second date.
 	// For any resulting stub periods, the numerator is the actual number of days in the period, the denominator
@@ -50,7 +45,6 @@ const (
 func (d Convention) String() string {
 	return [...]string{
 		"ActualActual",
-		"ActualActualISDA",
 		"ActualActualAFB",
 		"ActualThreeSixty",
 		"ActualThreeSixtyFiveFixed",

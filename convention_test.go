@@ -16,10 +16,6 @@ func TestConventionString(t *testing.T) {
 			ActualActual,
 		},
 		{
-			"ActualActualISDA",
-			ActualActualISDA,
-		},
-		{
 			"ActualActualAFB",
 			ActualActualAFB,
 		},
