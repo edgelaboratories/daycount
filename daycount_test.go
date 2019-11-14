@@ -38,7 +38,7 @@ func TestYearFractionDiff(t *testing.T) {
 		},
 		{
 			ThirtyThreeSixtyUS,
-			thirtyThreeSixtyDiff,
+			(30.0*5.0 + 29.0 + 30.0 + 1.0) / threeSixtyDays,
 		},
 		{
 			ThirtyThreeSixtyEuropean,
@@ -199,6 +199,12 @@ func TestYearFractionActualActualAFB(t *testing.T) {
 			date.New(2015, time.January, 28),
 			2.0 + 335.0/366.0,
 		},
+		{
+			"from 1996.01.01 to 1997.01.01",
+			date.New(1996, time.February, 1),
+			date.New(1997, time.January, 1),
+			(366.0 - 31.0) / 366.0,
+		},
 	}
 	for _, tc := range testCases {
 		tc := tc
@@ -209,15 +215,315 @@ func TestYearFractionActualActualAFB(t *testing.T) {
 }
 
 func TestYearFractionActualThreeSixty(t *testing.T) {
-	from := date.New(2018, time.January, 1)
-	to := date.New(2018, time.July, 31)
-	assert.InEpsilon(t, 211.0/360.0, yearFractionActualThreeSixty(from, to), epsilon)
+	testCases := []struct {
+		name     string
+		from     date.Date
+		to       date.Date
+		expected float64
+	}{
+		{
+			"from 2019.01.01 to 2019.01.01",
+			date.New(2019, time.January, 1),
+			date.New(2019, time.January, 1),
+			0.0,
+		},
+		{
+			"from 2008.02.28 to 2007.12.28",
+			date.New(2008, time.February, 28),
+			date.New(2007, time.December, 28),
+			-62.0 / 360.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.28",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 28),
+			62.0 / 360.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.29",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 29),
+			63.0 / 360.0,
+		},
+		{
+			"from 2007.10.31 to 2008.11.30",
+			date.New(2007, time.October, 31),
+			date.New(2008, time.November, 30),
+			396.0 / 360.0,
+		},
+		{
+			"from 2007.02.01 to 2008.05.31",
+			date.New(2007, time.February, 1),
+			date.New(2008, time.May, 31),
+			485.0 / 360.0,
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			assert.InDelta(t, tc.expected, yearFractionActualThreeSixty(tc.from, tc.to), epsilon)
+		})
+	}
 }
 
 func TestYearFractionActualThreeSixtyFiveFixed(t *testing.T) {
-	from := date.New(2018, time.January, 1)
-	to := date.New(2018, time.July, 31)
-	assert.InEpsilon(t, 211.0/365.0, yearFractionActualThreeSixtyFiveFixed(from, to), epsilon)
+	testCases := []struct {
+		name     string
+		from     date.Date
+		to       date.Date
+		expected float64
+	}{
+		{
+			"from 2019.01.01 to 2019.01.01",
+			date.New(2019, time.January, 1),
+			date.New(2019, time.January, 1),
+			0.0,
+		},
+		{
+			"from 2008.02.28 to 2007.12.28",
+			date.New(2008, time.February, 28),
+			date.New(2007, time.December, 28),
+			-62.0 / 365.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.28",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 28),
+			62.0 / 365.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.29",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 29),
+			63.0 / 365.0,
+		},
+		{
+			"from 2007.10.31 to 2008.11.30",
+			date.New(2007, time.October, 31),
+			date.New(2008, time.November, 30),
+			396.0 / 365.0,
+		},
+		{
+			"from 2007.02.01 to 2008.05.31",
+			date.New(2007, time.February, 1),
+			date.New(2008, time.May, 31),
+			485.0 / 365.0,
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			assert.InDelta(t, tc.expected, yearFractionActualThreeSixtyFiveFixed(tc.from, tc.to), epsilon)
+		})
+	}
+}
+
+func TestYearFractionThirtyThreeSixtyUS(t *testing.T) {
+	testCases := []struct {
+		name     string
+		from     date.Date
+		to       date.Date
+		expected float64
+	}{
+		{
+			"from 2019.01.01 to 2019.01.01",
+			date.New(2019, time.January, 1),
+			date.New(2019, time.January, 1),
+			0.0,
+		},
+		{
+			"from 2008.02.28 to 2007.12.28",
+			date.New(2008, time.February, 28),
+			date.New(2007, time.December, 28),
+			-60.0 / 360.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.28",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 28),
+			60.0 / 360.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.29",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 29),
+			61.0 / 360.0,
+		},
+		{
+			"from 2007.10.31 to 2008.11.30",
+			date.New(2007, time.October, 31),
+			date.New(2008, time.November, 30),
+			390.0 / 360.0,
+		},
+		{
+			"from 2007.02.01 to 2008.05.31",
+			date.New(2007, time.February, 1),
+			date.New(2008, time.May, 31),
+			480.0 / 360.0,
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyUS(tc.from, tc.to), epsilon)
+		})
+	}
+}
+
+func TestYearFractionThirtyThreeSixtyEuropean(t *testing.T) {
+	testCases := []struct {
+		name     string
+		from     date.Date
+		to       date.Date
+		expected float64
+	}{
+		{
+			"from 2019.01.01 to 2019.01.01",
+			date.New(2019, time.January, 1),
+			date.New(2019, time.January, 1),
+			0.0,
+		},
+		{
+			"from 2008.02.28 to 2007.12.28",
+			date.New(2008, time.February, 28),
+			date.New(2007, time.December, 28),
+			-60.0 / 360.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.28",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 28),
+			60.0 / 360.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.29",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 29),
+			61.0 / 360.0,
+		},
+		{
+			"from 2007.10.31 to 2008.11.30",
+			date.New(2007, time.October, 31),
+			date.New(2008, time.November, 30),
+			390.0 / 360.0,
+		},
+		{
+			"from 2007.02.01 to 2008.05.31",
+			date.New(2007, time.February, 1),
+			date.New(2008, time.May, 31),
+			479.0 / 360.0,
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyEuropean(tc.from, tc.to), epsilon)
+		})
+	}
+}
+
+func TestYearFractionThirtyThreeSixtyItalian(t *testing.T) {
+	testCases := []struct {
+		name     string
+		from     date.Date
+		to       date.Date
+		expected float64
+	}{
+		{
+			"from 2019.01.01 to 2019.01.01",
+			date.New(2019, time.January, 1),
+			date.New(2019, time.January, 1),
+			0.0,
+		},
+		{
+			"from 2008.02.28 to 2007.12.28",
+			date.New(2008, time.February, 28),
+			date.New(2007, time.December, 28),
+			-62.0 / 360.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.28",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 28),
+			62.0 / 360.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.29",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 29),
+			62.0 / 360.0,
+		},
+		{
+			"from 2007.10.31 to 2008.11.30",
+			date.New(2007, time.October, 31),
+			date.New(2008, time.November, 30),
+			390.0 / 360.0,
+		},
+		{
+			"from 2007.02.01 to 2008.05.31",
+			date.New(2007, time.February, 1),
+			date.New(2008, time.May, 31),
+			479.0 / 360.0,
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyItalian(tc.from, tc.to), epsilon)
+		})
+	}
+}
+
+func TestYearFractionThirtyThreeSixtyGerman(t *testing.T) {
+	testCases := []struct {
+		name     string
+		from     date.Date
+		to       date.Date
+		expected float64
+	}{
+		{
+			"from 2019.01.01 to 2019.01.01",
+			date.New(2019, time.January, 1),
+			date.New(2019, time.January, 1),
+			0.0,
+		},
+		{
+			"from 2008.02.28 to 2007.12.28",
+			date.New(2008, time.February, 28),
+			date.New(2007, time.December, 28),
+			-60.0 / 360.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.28",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 28),
+			60.0 / 360.0,
+		},
+		{
+			"from 2007.12.28 to 2008.02.29",
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 29),
+			62.0 / 360.0,
+		},
+		{
+			"from 2007.10.31 to 2008.11.30",
+			date.New(2007, time.October, 31),
+			date.New(2008, time.November, 30),
+			390.0 / 360.0,
+		},
+		{
+			"from 2007.02.01 to 2008.05.31",
+			date.New(2007, time.February, 1),
+			date.New(2008, time.May, 31),
+			479.0 / 360.0,
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyGerman(tc.from, tc.to), epsilon)
+		})
+	}
 }
 
 func TestIsLeapYear(t *testing.T) {
