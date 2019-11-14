@@ -14,6 +14,7 @@ func TestYearFractionDiff(t *testing.T) {
 	from := date.New(2018, time.January, 1)
 	to := date.New(2018, time.July, 31)
 	dayDiff := 211.0
+	thirtyThreeSixtyDiff := (threeSixtyDays*0.0 + 30.0*5.0 + 29.0 + 30.0) / threeSixtyDays
 
 	testCases := []struct {
 		convention Convention
@@ -37,20 +38,20 @@ func TestYearFractionDiff(t *testing.T) {
 		},
 		{
 			ThirtyThreeSixtyUS,
-			(threeSixtyDays*0.0 + 30.0*5.0 + 29.0 + 30.0) / threeSixtyDays,
+			thirtyThreeSixtyDiff,
 		},
-		// {
-		// 	ThirtyThreeSixtyEuropean,
-		// 	0.0,
-		// },
-		// {
-		// 	ThirtyThreeSixtyItalian,
-		// 	0.0,
-		// },
-		// {
-		// 	ThirtyThreeSixtyGerman,
-		// 	0.0,
-		// },
+		{
+			ThirtyThreeSixtyEuropean,
+			thirtyThreeSixtyDiff,
+		},
+		{
+			ThirtyThreeSixtyItalian,
+			thirtyThreeSixtyDiff,
+		},
+		{
+			ThirtyThreeSixtyGerman,
+			thirtyThreeSixtyDiff,
+		},
 	}
 	for _, tc := range testCases {
 		tc := tc
@@ -58,6 +59,13 @@ func TestYearFractionDiff(t *testing.T) {
 			assert.InEpsilon(t, tc.expected, YearFractionDiff(from, to, tc.convention), epsilon)
 		})
 	}
+}
+
+func TestYearFractionDiffDefaultConvention(t *testing.T) {
+	from := date.New(2018, time.January, 1)
+	to := date.New(2018, time.July, 31)
+	expected := 211.0 / threeSixtyFiveDays
+	assert.InEpsilon(t, expected, YearFractionDiff(from, to, Convention(-1)), epsilon)
 }
 
 func TestYearFractionActualActual(t *testing.T) {
