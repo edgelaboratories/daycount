@@ -11,6 +11,12 @@ import (
 // according to the input convention.
 // If the convention is not recognized, it defaults to ActualActual.
 func YearFractionDiff(from, to date.Date, convention Convention) float64 {
+	if from == to {
+		return 0.0
+	}
+	if from.After(to) {
+		return -YearFractionDiff(to, from, convention)
+	}
 	switch convention {
 	case ActualActual:
 		return yearFractionActualActual(from, to)
@@ -40,12 +46,6 @@ const (
 )
 
 func yearFractionActualActual(from, to date.Date) float64 {
-	if from == to {
-		return 0.0
-	}
-	if from.After(to) {
-		return -yearFractionActualActual(to, from)
-	}
 	fromYear, toYear := from.Year(), to.Year()
 	if fromYear == toYear {
 		return float64(to.Sub(from)) / daysPerYear(fromYear)
@@ -56,12 +56,6 @@ func yearFractionActualActual(from, to date.Date) float64 {
 }
 
 func yearFractionActualActualAFB(from, to date.Date) float64 {
-	if from == to {
-		return 0.0
-	}
-	if from.After(to) {
-		return -yearFractionActualActualAFB(to, from)
-	}
 	nbFullYears := 0
 	remaining, tmp := to, to
 	for tmp.After(from) {
@@ -90,32 +84,14 @@ func yearFractionActualActualAFB(from, to date.Date) float64 {
 }
 
 func yearFractionActualThreeSixty(from, to date.Date) float64 {
-	if from == to {
-		return 0.0
-	}
-	if from.After(to) {
-		return -yearFractionActualThreeSixty(to, from)
-	}
 	return float64(to.Sub(from)) / threeSixtyDays
 }
 
 func yearFractionActualThreeSixtyFiveFixed(from, to date.Date) float64 {
-	if from == to {
-		return 0.0
-	}
-	if from.After(to) {
-		return -yearFractionActualThreeSixtyFiveFixed(to, from)
-	}
 	return float64(to.Sub(from)) / threeSixtyFiveDays
 }
 
 func yearFractionThirtyThreeSixtyUS(from, to date.Date) float64 {
-	if from == to {
-		return 0.0
-	}
-	if from.After(to) {
-		return -yearFractionThirtyThreeSixtyUS(to, from)
-	}
 	if to.Day() == 31 && from.Day() < 30 {
 		to = to.Add(1)
 	}
@@ -123,22 +99,10 @@ func yearFractionThirtyThreeSixtyUS(from, to date.Date) float64 {
 }
 
 func yearFractionThirtyThreeSixtyEuropean(from, to date.Date) float64 {
-	if from == to {
-		return 0.0
-	}
-	if from.After(to) {
-		return -yearFractionThirtyThreeSixtyEuropean(to, from)
-	}
 	return yearFractionThirtyThreeSixty(from, to, 0.0)
 }
 
 func yearFractionThirtyThreeSixtyItalian(from, to date.Date) float64 {
-	if from == to {
-		return 0.0
-	}
-	if from.After(to) {
-		return -yearFractionThirtyThreeSixtyItalian(to, from)
-	}
 	shift := func(d date.Date) int {
 		if d.Month() == time.February && d.Day() > 27 {
 			return 30 - d.Day()
@@ -150,12 +114,6 @@ func yearFractionThirtyThreeSixtyItalian(from, to date.Date) float64 {
 }
 
 func yearFractionThirtyThreeSixtyGerman(from, to date.Date) float64 {
-	if from == to {
-		return 0.0
-	}
-	if from.After(to) {
-		return -yearFractionThirtyThreeSixtyGerman(to, from)
-	}
 	shift := func(d date.Date) int {
 		if tmp := d.Add(1); tmp.Month() == time.March && tmp.Day() == 1 {
 			return 1

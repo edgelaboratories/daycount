@@ -68,6 +68,19 @@ func TestYearFractionDiffDefaultConvention(t *testing.T) {
 	assert.InEpsilon(t, expected, YearFractionDiff(from, to, Convention(-1)), epsilon)
 }
 
+func TestYearFractionDiffEqualDates(t *testing.T) {
+	from := date.New(2018, time.January, 1)
+	to := from
+	assert.Equal(t, 0.0, YearFractionDiff(from, to, ActualActual))
+}
+
+func TestYearFractionDiffInvertedDates(t *testing.T) {
+	from := date.New(2018, time.July, 31)
+	to := date.New(2018, time.January, 1)
+	expected := -211.0 / threeSixtyFiveDays
+	assert.InEpsilon(t, expected, YearFractionDiff(from, to, ActualActual), epsilon)
+}
+
 func TestYearFractionActualActual(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -75,12 +88,6 @@ func TestYearFractionActualActual(t *testing.T) {
 		to       date.Date
 		expected float64
 	}{
-		{
-			"from 2019.01.01 to 2019.01.01",
-			date.New(2019, time.January, 1),
-			date.New(2019, time.January, 1),
-			0.0,
-		},
 		{
 			"from 2019.07.01 to 2019.01.01",
 			date.New(2019, time.July, 1),
@@ -152,18 +159,6 @@ func TestYearFractionActualActualAFB(t *testing.T) {
 		expected float64
 	}{
 		{
-			"from 2019.01.01 to 2019.01.01",
-			date.New(2019, time.January, 1),
-			date.New(2019, time.January, 1),
-			0.0,
-		},
-		{
-			"from 2008.02.28 to 2007.12.28",
-			date.New(2008, time.February, 28),
-			date.New(2007, time.December, 28),
-			-62.0 / 365.0,
-		},
-		{
 			"from 2007.12.28 to 2008.02.28",
 			date.New(2007, time.December, 28),
 			date.New(2008, time.February, 28),
@@ -222,18 +217,6 @@ func TestYearFractionActualThreeSixty(t *testing.T) {
 		expected float64
 	}{
 		{
-			"from 2019.01.01 to 2019.01.01",
-			date.New(2019, time.January, 1),
-			date.New(2019, time.January, 1),
-			0.0,
-		},
-		{
-			"from 2008.02.28 to 2007.12.28",
-			date.New(2008, time.February, 28),
-			date.New(2007, time.December, 28),
-			-62.0 / 360.0,
-		},
-		{
 			"from 2007.12.28 to 2008.02.28",
 			date.New(2007, time.December, 28),
 			date.New(2008, time.February, 28),
@@ -273,18 +256,6 @@ func TestYearFractionActualThreeSixtyFiveFixed(t *testing.T) {
 		to       date.Date
 		expected float64
 	}{
-		{
-			"from 2019.01.01 to 2019.01.01",
-			date.New(2019, time.January, 1),
-			date.New(2019, time.January, 1),
-			0.0,
-		},
-		{
-			"from 2008.02.28 to 2007.12.28",
-			date.New(2008, time.February, 28),
-			date.New(2007, time.December, 28),
-			-62.0 / 365.0,
-		},
 		{
 			"from 2007.12.28 to 2008.02.28",
 			date.New(2007, time.December, 28),
@@ -326,18 +297,6 @@ func TestYearFractionThirtyThreeSixtyUS(t *testing.T) {
 		expected float64
 	}{
 		{
-			"from 2019.01.01 to 2019.01.01",
-			date.New(2019, time.January, 1),
-			date.New(2019, time.January, 1),
-			0.0,
-		},
-		{
-			"from 2008.02.28 to 2007.12.28",
-			date.New(2008, time.February, 28),
-			date.New(2007, time.December, 28),
-			-60.0 / 360.0,
-		},
-		{
 			"from 2007.12.28 to 2008.02.28",
 			date.New(2007, time.December, 28),
 			date.New(2008, time.February, 28),
@@ -377,18 +336,6 @@ func TestYearFractionThirtyThreeSixtyEuropean(t *testing.T) {
 		to       date.Date
 		expected float64
 	}{
-		{
-			"from 2019.01.01 to 2019.01.01",
-			date.New(2019, time.January, 1),
-			date.New(2019, time.January, 1),
-			0.0,
-		},
-		{
-			"from 2008.02.28 to 2007.12.28",
-			date.New(2008, time.February, 28),
-			date.New(2007, time.December, 28),
-			-60.0 / 360.0,
-		},
 		{
 			"from 2007.12.28 to 2008.02.28",
 			date.New(2007, time.December, 28),
@@ -430,18 +377,6 @@ func TestYearFractionThirtyThreeSixtyItalian(t *testing.T) {
 		expected float64
 	}{
 		{
-			"from 2019.01.01 to 2019.01.01",
-			date.New(2019, time.January, 1),
-			date.New(2019, time.January, 1),
-			0.0,
-		},
-		{
-			"from 2008.02.28 to 2007.12.28",
-			date.New(2008, time.February, 28),
-			date.New(2007, time.December, 28),
-			-62.0 / 360.0,
-		},
-		{
 			"from 2007.12.28 to 2008.02.28",
 			date.New(2007, time.December, 28),
 			date.New(2008, time.February, 28),
@@ -481,18 +416,6 @@ func TestYearFractionThirtyThreeSixtyGerman(t *testing.T) {
 		to       date.Date
 		expected float64
 	}{
-		{
-			"from 2019.01.01 to 2019.01.01",
-			date.New(2019, time.January, 1),
-			date.New(2019, time.January, 1),
-			0.0,
-		},
-		{
-			"from 2008.02.28 to 2007.12.28",
-			date.New(2008, time.February, 28),
-			date.New(2007, time.December, 28),
-			-60.0 / 360.0,
-		},
 		{
 			"from 2007.12.28 to 2008.02.28",
 			date.New(2007, time.December, 28),
