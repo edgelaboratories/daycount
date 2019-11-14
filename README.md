@@ -25,6 +25,9 @@ import (
 )
 
 func main() {
-	// ADD EXAMPLE
+	from := date.New(2018, time.January, 1)
+	to := date.New(2018, time.July, 31)
+	yf := daycount.YearFractionDiff(from, to, daycount.ActualActual)
+	fmt.Printf("year fraction between the two dates is %0.2f\n", yf)
 }
 ```
