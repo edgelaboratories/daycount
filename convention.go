@@ -9,7 +9,7 @@ const (
 	// In this case, the day-count fraction is the number of days in the period in a normal year over 365
 	// or the number of days in the period in a leap year over 366.
 	ActualActual Convention = iota
-	// ActualActualAFB is the actual/actual AFB convention
+	// ActualActualAFB is the actual/actual AFB convention.
 	// This method first calculates the number of full years counting backwards from the second date.
 	// For any resulting stub periods, the numerator is the actual number of days in the period, the denominator
 	// being 365 or 366 depending on whether February 29th falls in the stub period.
@@ -22,22 +22,21 @@ const (
 	// It is also used for money markets in Australia, Canada and New Zealand.
 	ActualThreeSixtyFiveFixed
 	// ThirtyThreeSixtyUS is commonly used for corporate bonds, municipal bonds, and agency bonds in the U.S.
-	// If the first date falls on the 31st, it is changed to the 30th.
 	// If the second date falls on the 31st and the first date is earlier than the 30th, then the second date is
-	// changed to the 1st of the next month, otherwise it is changed to the 30th.
+	// changed to the 1st of the next month.
 	ThirtyThreeSixtyUS
 	// ThirtyThreeSixtyEuropean is used for calculating accrued interest on some legacy currency pre Euro
 	// Eurobonds and on bonds in Sweden and Switzerland.
 	// This method assumes that all months have 30 days, even February, and that a year is 360 days.
 	// Effectively if the start date d1 is 31 then it changes to 30, and if the second date d2 is 31 it too changes to 30.
 	ThirtyThreeSixtyEuropean
-	// ThirtyThreeSixtyItalian is the 30/360 Italian convention
-	// If the first date falls on the 31st or if it is February 28th or 29th, then it is changed to the 30th.
-	// If the second date falls on the 31st or if it is February 28th or 29th, then it is changed to the 30th.
+	// ThirtyThreeSixtyItalian is the 30/360 Italian convention.
+	// If the first date is February 28th or 29th, then it is changed to the 30th.
+	// If the second date is February 28th or 29th, then it is changed to the 30th.
 	ThirtyThreeSixtyItalian
-	// ThirtyThreeSixtyGerman is the 30/360 German convention
-	// If the first date falls on the 31st or if it is the last day of February, then it is changed to the 30th.
-	// If the second date falls on the 31st or if it is the last day of February, then it is changed to the 30th.
+	// ThirtyThreeSixtyGerman is the 30/360 German convention.
+	// If the first date is the last day of February, then it is changed to the 1st of March.
+	// If the second date is the last day of February, then it is changed to the 1st of March.
 	ThirtyThreeSixtyGerman
 )
 
