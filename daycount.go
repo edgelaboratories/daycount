@@ -72,12 +72,12 @@ func yearFractionActualActualAFB(from, to date.Date) float64 {
 	if isLeapYear(remaining.Year()) {
 		date := date.New(remaining.Year(), time.February, 29)
 		if remaining.After(date) && !from.After(date) {
-			den += 1.0
+			den = threeSixtySixDays
 		}
 	} else if isLeapYear(from.Year()) {
 		date := date.New(from.Year(), time.February, 29)
 		if remaining.After(date) && !from.After(date) {
-			den += 1.0
+			den = threeSixtySixDays
 		}
 	}
 	return float64(nbFullYears) + float64(remaining.Sub(from))/den
