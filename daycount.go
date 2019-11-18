@@ -57,8 +57,8 @@ func yearFractionActualActual(from, to date.Date) float64 {
 
 func yearFractionActualActualAFB(from, to date.Date) float64 {
 	nbFullYears := 0
-	remaining, tmp := to, to
-	for tmp.After(from) {
+	remaining := to
+	for tmp := to; tmp.After(from); {
 		tmp = tmp.AddDate(-1, 0, 0)
 		if tmp.Day() == 28 && tmp.Month() == time.February && isLeapYear(tmp.Year()) {
 			tmp = tmp.Add(1)

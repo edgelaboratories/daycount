@@ -200,6 +200,12 @@ func TestYearFractionActualActualAFB(t *testing.T) {
 			date.New(1997, time.January, 1),
 			(366.0 - 31.0) / 366.0,
 		},
+		{
+			"from 2004.02.28 to 2004.03.02",
+			date.New(2004, time.February, 28),
+			date.New(2004, time.March, 2),
+			3.0 / 366.0,
+		},
 	}
 	for _, tc := range testCases {
 		tc := tc
