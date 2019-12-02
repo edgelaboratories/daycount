@@ -1,6 +1,10 @@
 package daycount
 
-import "github.com/pkg/errors"
+import (
+	"encoding/json"
+
+	"github.com/pkg/errors"
+)
 
 // Convention is the daycounting convention
 type Convention int
@@ -78,4 +82,17 @@ func Parse(convention string) (Convention, error) {
 	default:
 		return -1, errors.Errorf("unrecognized daycount convention %s", convention)
 	}
+}
+
+func (d *Convention) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	res, err := Parse(s)
+	if err != nil {
+		return err
+	}
+	*d = res
+	return nil
 }

@@ -1,6 +1,7 @@
 package daycount
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -73,4 +74,38 @@ func Test_Parse(t *testing.T) {
 func Test_Parse_UnknownConvention(t *testing.T) {
 	_, err := Parse("UnknownConvention")
 	assert.Error(t, err)
+}
+
+func Test_Convention_UnmarshalJSON(t *testing.T) {
+	type data struct {
+		Convention Convention `json:"convention"`
+	}
+	b := []byte(`{
+		"convention": "ActualActual"
+	}`)
+	var d data
+	assert.NoError(t, json.Unmarshal(b, &d))
+	assert.Equal(t, ActualActual, d.Convention)
+}
+
+func Test_Convention_UnmarshalJSON_InvalidInput(t *testing.T) {
+	type data struct {
+		Convention Convention `json:"convention"`
+	}
+	b := []byte(`{
+		"convention": 0.01
+	}`)
+	var d data
+	assert.Error(t, json.Unmarshal(b, &d))
+}
+
+func Test_Convention_UnmarshalJSON_UnrecognizedConvention(t *testing.T) {
+	type data struct {
+		Convention Convention `json:"convention"`
+	}
+	b := []byte(`{
+		"convention": "SomeInvalidConvention"
+	}`)
+	var d data
+	assert.Error(t, json.Unmarshal(b, &d))
 }
