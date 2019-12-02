@@ -51,3 +51,26 @@ func TestConventionString(t *testing.T) {
 		})
 	}
 }
+
+func Test_Parse(t *testing.T) {
+	testConventions := []Convention{
+		ActualActual,
+		ActualActualAFB,
+		ActualThreeSixty,
+		ActualThreeSixtyFiveFixed,
+		ThirtyThreeSixtyUS,
+		ThirtyThreeSixtyEuropean,
+		ThirtyThreeSixtyItalian,
+		ThirtyThreeSixtyGerman,
+	}
+	for _, convention := range testConventions {
+		output, err := Parse(convention.String())
+		assert.NoError(t, err)
+		assert.Equal(t, convention, output)
+	}
+}
+
+func Test_Parse_UnknownConvention(t *testing.T) {
+	_, err := Parse("UnknownConvention")
+	assert.Error(t, err)
+}
