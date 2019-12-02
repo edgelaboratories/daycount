@@ -1,6 +1,7 @@
 package daycount
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -97,5 +98,8 @@ func (d *Convention) UnmarshalJSON(b []byte) error {
 }
 
 func (d Convention) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, d)), nil
+	buffer := bytes.NewBufferString(`"`)
+	buffer.WriteString(d.String())
+	buffer.WriteString(`"`)
+	return buffer.Bytes(), nil
 }
