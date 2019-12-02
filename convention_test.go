@@ -109,3 +109,15 @@ func Test_Convention_UnmarshalJSON_UnrecognizedConvention(t *testing.T) {
 	var d data
 	assert.Error(t, json.Unmarshal(b, &d))
 }
+
+func Test_Convention_MarshalJSON(t *testing.T) {
+	type data struct {
+		Convention Convention `json:"convention"`
+	}
+	d := data{
+		Convention: ThirtyThreeSixtyEuropean,
+	}
+	output, err := json.Marshal(d)
+	assert.NoError(t, err)
+	assert.Equal(t, []byte(`{"convention":"ThirtyThreeSixtyEuropean"}`), output)
+}

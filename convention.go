@@ -2,6 +2,7 @@ package daycount
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/pkg/errors"
 )
@@ -95,4 +96,8 @@ func (d *Convention) UnmarshalJSON(b []byte) error {
 	}
 	*d = res
 	return nil
+}
+
+func (d Convention) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, d)), nil
 }
