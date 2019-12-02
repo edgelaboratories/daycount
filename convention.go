@@ -3,8 +3,6 @@ package daycount
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 // Convention is the daycounting convention
@@ -81,7 +79,7 @@ func Parse(convention string) (Convention, error) {
 	case "ThirtyThreeSixtyGerman":
 		return ThirtyThreeSixtyGerman, nil
 	default:
-		return -1, errors.Errorf("unrecognized daycount convention %s", convention)
+		return -1, fmt.Errorf("unrecognized daycount convention %s", convention)
 	}
 }
 
