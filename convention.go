@@ -1,5 +1,12 @@
 package daycount
 
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/pkg/errors"
+)
+
 // Convention is the daycounting convention
 type Convention int
 
@@ -52,4 +59,45 @@ func (d Convention) String() string {
 		"ThirtyThreeSixtyItalian",
 		"ThirtyThreeSixtyGerman",
 	}[d]
+}
+
+// Parse maps an input string to a daycount convention
+func Parse(convention string) (Convention, error) {
+	switch convention {
+	case "ActualActual":
+		return ActualActual, nil
+	case "ActualActualAFB":
+		return ActualActualAFB, nil
+	case "ActualThreeSixty":
+		return ActualThreeSixty, nil
+	case "ActualThreeSixtyFiveFixed":
+		return ActualThreeSixtyFiveFixed, nil
+	case "ThirtyThreeSixtyUS":
+		return ThirtyThreeSixtyUS, nil
+	case "ThirtyThreeSixtyEuropean":
+		return ThirtyThreeSixtyEuropean, nil
+	case "ThirtyThreeSixtyItalian":
+		return ThirtyThreeSixtyItalian, nil
+	case "ThirtyThreeSixtyGerman":
+		return ThirtyThreeSixtyGerman, nil
+	default:
+		return -1, errors.Errorf("unrecognized daycount convention %s", convention)
+	}
+}
+
+func (d *Convention) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	res, err := Parse(s)
+	if err != nil {
+		return err
+	}
+	*d = res
+	return nil
+}
+
+func (d Convention) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, d)), nil
 }
