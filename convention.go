@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-// Convention is the daycounting convention
+// Convention is the daycounting convention.
 type Convention int
 
 const (
@@ -46,7 +46,7 @@ const (
 	ThirtyThreeSixtyGerman
 )
 
-// String returns the convention name
+// String returns the convention name.
 func (d Convention) String() string {
 	return [...]string{
 		"ActualActual",
@@ -60,7 +60,7 @@ func (d Convention) String() string {
 	}[d]
 }
 
-// Parse maps an input string to a daycount convention
+// Parse maps an input string to a daycount convention.
 func Parse(convention string) (Convention, error) {
 	switch convention {
 	case "ActualActual":
