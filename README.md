@@ -1,8 +1,8 @@
 # Daycount
 
 [![GoDoc](https://godoc.org/github.com/edgelaboratories/daycount?status.png)](http://godoc.org/github.com/edgelaboratories/daycount)
-[![Build Status](https://api.travis-ci.org/edgelaboratories/daycount.svg?branch=master)](https://travis-ci.org/edgelaboratories/daycount)
-[![Go Report Card](https://goreportcard.com/badge/github.com/edgelaboratories/daycount)](https://goreportcard.com/report/github.com/edgelaboratories/daycount)
+![Build Status](https://github.com/actions/daycount/workflows/Test/badge.svg)
+![GolangCI Lint]((https://github.com/actions/daycount/workflows/golangci/badge.svg)
 
 ## Description
 
