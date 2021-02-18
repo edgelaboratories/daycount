@@ -76,24 +76,25 @@ func yearFractionActualActualAFB(from, to date.Date) float64 {
 		}
 	}
 
-	den := func() float64 {
-		if isLeapYear(remaining.Year()) {
-			date := date.New(remaining.Year(), time.February, 29)
-			if remaining.After(date) && !from.After(date) {
-				return threeSixtySixDays
-			}
-		}
-		if isLeapYear(from.Year()) {
-			date := date.New(from.Year(), time.February, 29)
-			if remaining.After(date) && !from.After(date) {
-				return threeSixtySixDays
-			}
-		}
+	return float64(nbFullYears) + float64(remaining.Sub(from))/computeYearDurationAFB(from, remaining)
+}
 
-		return threeSixtyFiveDays
-	}()
+func computeYearDurationAFB(from, remaining date.Date) float64 {
+	if isLeapYear(remaining.Year()) {
+		date := date.New(remaining.Year(), time.February, 29)
+		if remaining.After(date) && !from.After(date) {
+			return threeSixtySixDays
+		}
+	}
 
-	return float64(nbFullYears) + float64(remaining.Sub(from))/den
+	if isLeapYear(from.Year()) {
+		date := date.New(from.Year(), time.February, 29)
+		if remaining.After(date) && !from.After(date) {
+			return threeSixtySixDays
+		}
+	}
+
+	return threeSixtyFiveDays
 }
 
 func yearFractionActualThreeSixty(from, to date.Date) float64 {
