@@ -8,6 +8,8 @@ import (
 )
 
 func TestConventionString(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name       string
 		convention Convention
@@ -48,12 +50,16 @@ func TestConventionString(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			assert.Equal(t, tc.name, tc.convention.String())
 		})
 	}
 }
 
 func Test_Parse(t *testing.T) {
+	t.Parallel()
+
 	testConventions := []Convention{
 		ActualActual,
 		ActualActualAFB,
@@ -72,11 +78,15 @@ func Test_Parse(t *testing.T) {
 }
 
 func Test_Parse_UnknownConvention(t *testing.T) {
+	t.Parallel()
+
 	_, err := Parse("UnknownConvention")
 	assert.Error(t, err)
 }
 
 func Test_Convention_UnmarshalJSON(t *testing.T) {
+	t.Parallel()
+
 	type data struct {
 		Convention Convention `json:"convention"`
 	}
@@ -89,6 +99,8 @@ func Test_Convention_UnmarshalJSON(t *testing.T) {
 }
 
 func Test_Convention_UnmarshalJSON_InvalidInput(t *testing.T) {
+	t.Parallel()
+
 	type data struct {
 		Convention Convention `json:"convention"`
 	}
@@ -100,6 +112,8 @@ func Test_Convention_UnmarshalJSON_InvalidInput(t *testing.T) {
 }
 
 func Test_Convention_UnmarshalJSON_UnrecognizedConvention(t *testing.T) {
+	t.Parallel()
+
 	type data struct {
 		Convention Convention `json:"convention"`
 	}
@@ -111,6 +125,8 @@ func Test_Convention_UnmarshalJSON_UnrecognizedConvention(t *testing.T) {
 }
 
 func Test_Convention_MarshalJSON(t *testing.T) {
+	t.Parallel()
+
 	type data struct {
 		Convention Convention `json:"convention"`
 	}

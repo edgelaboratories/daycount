@@ -11,6 +11,8 @@ import (
 const epsilon = 1.0e-6
 
 func TestYearFractionDiff(t *testing.T) {
+	t.Parallel()
+
 	from := date.New(2018, time.January, 1)
 	to := date.New(2018, time.July, 31)
 	dayDiff := 211.0
@@ -53,15 +55,20 @@ func TestYearFractionDiff(t *testing.T) {
 			thirtyThreeSixtyDiff,
 		},
 	}
-	for _, tc := range testCases {
+	for _, tc := range testCases { //nolint:paralleltest // false positive
 		tc := tc
+
 		t.Run(tc.convention.String(), func(t *testing.T) {
+			t.Parallel()
+
 			assert.InEpsilon(t, tc.expected, YearFractionDiff(from, to, tc.convention), epsilon)
 		})
 	}
 }
 
 func TestYearFractionDiffDefaultConvention(t *testing.T) {
+	t.Parallel()
+
 	from := date.New(2018, time.January, 1)
 	to := date.New(2018, time.July, 31)
 	expected := 211.0 / threeSixtyFiveDays
@@ -69,12 +76,16 @@ func TestYearFractionDiffDefaultConvention(t *testing.T) {
 }
 
 func TestYearFractionDiffEqualDates(t *testing.T) {
+	t.Parallel()
+
 	from := date.New(2018, time.January, 1)
 	to := from
 	assert.Equal(t, 0.0, YearFractionDiff(from, to, ActualActual))
 }
 
 func TestYearFractionDiffInvertedDates(t *testing.T) {
+	t.Parallel()
+
 	from := date.New(2018, time.July, 31)
 	to := date.New(2018, time.January, 1)
 	expected := -211.0 / threeSixtyFiveDays
@@ -82,6 +93,8 @@ func TestYearFractionDiffInvertedDates(t *testing.T) {
 }
 
 func TestYearFractionActualActual(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name     string
 		from     date.Date
@@ -146,12 +159,16 @@ func TestYearFractionActualActual(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			assert.InDelta(t, tc.expected, yearFractionActualActual(tc.from, tc.to), epsilon)
 		})
 	}
 }
 
 func TestYearFractionActualActualAFB(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name     string
 		from     date.Date
@@ -210,12 +227,16 @@ func TestYearFractionActualActualAFB(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			assert.InDelta(t, tc.expected, yearFractionActualActualAFB(tc.from, tc.to), epsilon)
 		})
 	}
 }
 
 func TestYearFractionActualThreeSixty(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name     string
 		from     date.Date
@@ -250,12 +271,16 @@ func TestYearFractionActualThreeSixty(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			assert.InDelta(t, tc.expected, yearFractionActualThreeSixty(tc.from, tc.to), epsilon)
 		})
 	}
 }
 
 func TestYearFractionActualThreeSixtyFiveFixed(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name     string
 		from     date.Date
@@ -290,12 +315,16 @@ func TestYearFractionActualThreeSixtyFiveFixed(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			assert.InDelta(t, tc.expected, yearFractionActualThreeSixtyFiveFixed(tc.from, tc.to), epsilon)
 		})
 	}
 }
 
 func TestYearFractionThirtyThreeSixtyUS(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name     string
 		from     date.Date
@@ -330,12 +359,16 @@ func TestYearFractionThirtyThreeSixtyUS(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyUS(tc.from, tc.to), epsilon)
 		})
 	}
 }
 
 func TestYearFractionThirtyThreeSixtyEuropean(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name     string
 		from     date.Date
@@ -370,12 +403,16 @@ func TestYearFractionThirtyThreeSixtyEuropean(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyEuropean(tc.from, tc.to), epsilon)
 		})
 	}
 }
 
 func TestYearFractionThirtyThreeSixtyItalian(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name     string
 		from     date.Date
@@ -410,12 +447,16 @@ func TestYearFractionThirtyThreeSixtyItalian(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyItalian(tc.from, tc.to), epsilon)
 		})
 	}
 }
 
 func TestYearFractionThirtyThreeSixtyGerman(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name     string
 		from     date.Date
@@ -450,12 +491,16 @@ func TestYearFractionThirtyThreeSixtyGerman(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyGerman(tc.from, tc.to), epsilon)
 		})
 	}
 }
 
 func TestIsLeapYear(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		year     int
 		expected bool
@@ -491,6 +536,8 @@ func TestIsLeapYear(t *testing.T) {
 }
 
 func TestDaysPerYear(t *testing.T) {
+	t.Parallel()
+
 	assert.Equal(t, threeSixtyFiveDays, daysPerYear(2015))
 	assert.Equal(t, threeSixtySixDays, daysPerYear(2000))
 }

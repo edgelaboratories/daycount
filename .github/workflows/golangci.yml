@@ -1,13 +1,19 @@
-name: golangci
+name: GolangCI
 on: [pull_request]
 jobs:
   golangci-lint:
     name: runner / golangci-lint
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code into the Go module directory
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v2.0.0
+
+      - name: Install Go
+        uses: actions/setup-go@v2
         with:
-          version: v1.28
+          go-version: 1.16.x
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.37
