@@ -5,8 +5,6 @@ github.com/fxtlabs/date v0.0.0-20150819233934-d9ab6e2a88a9 h1:NERIc41aohgojUAgWC
 github.com/fxtlabs/date v0.0.0-20150819233934-d9ab6e2a88a9/go.mod h1:UoIEyXCyEJ1Zu3ejiUOSngl9U5Oe9S+qaNiYiUex2nk=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/rickar/cal v1.0.5 h1:ccTH7okdpqbT+X7hlWgQM4Hv3rTvpV8Stu7enQx7ywY=
-github.com/rickar/cal v1.0.5/go.mod h1:3GBx8OBrvh4/y/JTxM0e1bUUIHMnqILl1rMANHWExxQ=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.6.1 h1:hDPOHmpOpP40lSULcqw7IrRb/u7w6RpDC9399XyoNd0=
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
