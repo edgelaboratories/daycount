@@ -14,7 +14,7 @@ jobs:
           go-version: 1.17.x
 
       - name: Update dependencies
-        run: go mod tidy
+        run: go mod tidy -go=1.17
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v2
