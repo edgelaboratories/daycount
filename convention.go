@@ -90,6 +90,7 @@ func (d *Convention) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &s); err != nil {
 		return fmt.Errorf("could not unmarshal convention: %w", err)
 	}
+
 	res, err := Parse(s)
 	if err != nil {
 		return err
@@ -101,9 +102,7 @@ func (d *Convention) UnmarshalJSON(b []byte) error {
 
 // MarshalJSON implements the JSON marshaler.
 func (d Convention) MarshalJSON() ([]byte, error) {
-	buffer := bytes.NewBufferString(`"`)
-	buffer.WriteString(d.String())
-	buffer.WriteString(`"`)
-
-	return buffer.Bytes(), nil
+	return bytes.NewBufferString(
+		fmt.Sprintf(`"%s"`, d.String()),
+	).Bytes(), nil
 }

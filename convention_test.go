@@ -7,10 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConventionString(t *testing.T) {
+func Test_Convention_String(t *testing.T) {
 	t.Parallel()
 
-	testCases := []struct {
+	for _, tc := range []struct {
 		name       string
 		convention Convention
 	}{
@@ -46,8 +46,7 @@ func TestConventionString(t *testing.T) {
 			"ThirtyThreeSixtyGerman",
 			ThirtyThreeSixtyGerman,
 		},
-	}
-	for _, tc := range testCases {
+	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
@@ -60,7 +59,7 @@ func TestConventionString(t *testing.T) {
 func Test_Parse(t *testing.T) {
 	t.Parallel()
 
-	testConventions := []Convention{
+	for _, convention := range []Convention{
 		ActualActual,
 		ActualActualAFB,
 		ActualThreeSixty,
@@ -69,8 +68,7 @@ func Test_Parse(t *testing.T) {
 		ThirtyThreeSixtyEuropean,
 		ThirtyThreeSixtyItalian,
 		ThirtyThreeSixtyGerman,
-	}
-	for _, convention := range testConventions {
+	} {
 		output, err := Parse(convention.String())
 		assert.NoError(t, err)
 		assert.Equal(t, convention, output)
@@ -87,53 +85,49 @@ func Test_Parse_UnknownConvention(t *testing.T) {
 func Test_Convention_UnmarshalJSON(t *testing.T) {
 	t.Parallel()
 
-	type data struct {
+	var d struct {
 		Convention Convention `json:"convention"`
 	}
-	b := []byte(`{
-		"convention": "ActualActual"
-	}`)
-	var d data
-	assert.NoError(t, json.Unmarshal(b, &d))
+	assert.NoError(t, json.Unmarshal([]byte(`{"convention": "ActualActual"}`), &d))
 	assert.Equal(t, ActualActual, d.Convention)
 }
 
-func Test_Convention_UnmarshalJSON_InvalidInput(t *testing.T) {
+func Test_Convention_UnmarshalJSON_Invalid(t *testing.T) {
 	t.Parallel()
 
-	type data struct {
-		Convention Convention `json:"convention"`
-	}
-	b := []byte(`{
-		"convention": 0.01
-	}`)
-	var d data
-	assert.Error(t, json.Unmarshal(b, &d))
-}
+	for _, tc := range []struct {
+		name  string
+		input string
+	}{
+		{
+			"invalid input",
+			`{"convention": 0.01}`,
+		},
+		{
+			"unrecognized convention",
+			`{"convention": "SomeInvalidConvention"}`,
+		},
+	} {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 
-func Test_Convention_UnmarshalJSON_UnrecognizedConvention(t *testing.T) {
-	t.Parallel()
-
-	type data struct {
-		Convention Convention `json:"convention"`
+			var d struct {
+				Convention Convention `json:"convention"`
+			}
+			assert.Error(t, json.Unmarshal([]byte(tc.input), &d))
+		})
 	}
-	b := []byte(`{
-		"convention": "SomeInvalidConvention"
-	}`)
-	var d data
-	assert.Error(t, json.Unmarshal(b, &d))
 }
 
 func Test_Convention_MarshalJSON(t *testing.T) {
 	t.Parallel()
 
-	type data struct {
+	output, err := json.Marshal(struct {
 		Convention Convention `json:"convention"`
-	}
-	d := data{
+	}{
 		Convention: ThirtyThreeSixtyEuropean,
-	}
-	output, err := json.Marshal(d)
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, []byte(`{"convention":"ThirtyThreeSixtyEuropean"}`), output)
 }
