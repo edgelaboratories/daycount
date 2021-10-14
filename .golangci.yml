@@ -8,6 +8,10 @@ linters:
     - gomnd
     - lll
     - wsl
+    - scopelint #deprecated
+    - maligned #deprecated
+    - golint #deprecated
+    - interfacer #deprecated
 
 issues:
   exclude-rules:

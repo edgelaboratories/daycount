@@ -11,9 +11,10 @@ import (
 // according to the input convention.
 // If the convention is not recognized, it defaults to ActualActual.
 func YearFractionDiff(from, to date.Date, convention Convention) float64 {
-	if from == to {
+	if to.Equal(from) {
 		return 0.0
 	}
+
 	if from.After(to) {
 		return -YearFractionDiff(to, from, convention)
 	}
@@ -55,6 +56,7 @@ func yearFractionActualActual(from, to date.Date) float64 {
 	if fromYear == toYear {
 		return float64(to.Sub(from)) / daysPerYear(fromYear)
 	}
+
 	firstFraction := float64(date.New(fromYear+1, time.January, 1).Sub(from)) / daysPerYear(fromYear)
 	lastFraction := float64(to.Sub(date.New(toYear, time.January, 1))) / daysPerYear(toYear)
 
@@ -67,9 +69,11 @@ func yearFractionActualActualAFB(from, to date.Date) float64 {
 	remaining := to
 	for tmp := to; tmp.After(from); {
 		tmp = tmp.AddDate(-1, 0, 0)
+
 		if tmp.Day() == 28 && tmp.Month() == time.February && isLeapYear(tmp.Year()) {
 			tmp = tmp.Add(1)
 		}
+
 		if !tmp.Before(from) {
 			nbFullYears++
 			remaining = tmp
@@ -125,6 +129,7 @@ func yearFractionThirtyThreeSixtyItalian(from, to date.Date) float64 {
 
 		return 0
 	}
+
 	dayShift := shift(from) + shift(to)
 
 	return yearFractionThirtyThreeSixty(from, to, dayShift)
@@ -138,6 +143,7 @@ func yearFractionThirtyThreeSixtyGerman(from, to date.Date) float64 {
 
 		return 0
 	}
+
 	dayShift := shift(from) + shift(to)
 
 	return yearFractionThirtyThreeSixty(from, to, dayShift)
