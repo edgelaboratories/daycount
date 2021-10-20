@@ -7,41 +7,76 @@ import (
 	"github.com/fxtlabs/date"
 )
 
-// YearFractionDiff returns the year fraction difference between two dates
-// according to the input convention.
+// DayCounter computes the year fraction between a from and a to date
+// according to a predefined day-count convention.
+type DayCounter struct {
+	f dayCounterFunc
+}
+
+// NewDayCounter returns a DayCounter based on the input convention.
+func NewDayCounter(convention Convention) *DayCounter {
+	return &DayCounter{
+		f: newDayCounterFunc(convention),
+	}
+}
+
+// YearFractionDiff returns the year fraction difference between two dates.
 // If the convention is not recognized, it defaults to ActualActual.
-func YearFractionDiff(from, to date.Date, convention Convention) float64 {
+func (d DayCounter) YearFraction(from, to date.Date) float64 {
 	if to.Equal(from) {
 		return 0.0
 	}
 
 	if from.After(to) {
-		return -YearFractionDiff(to, from, convention)
+		return -d.YearFraction(to, from)
 	}
 
-	return yearFractionDiff(from, to, convention)
+	return d.f(from, to)
 }
 
-func yearFractionDiff(from, to date.Date, convention Convention) float64 {
+// YearFraction returns the year fraction difference between two dates
+// according to the input convention.
+// If the convention is not recognized, it defaults to ActualActual.
+func YearFraction(from, to date.Date, convention Convention) float64 {
+	return NewDayCounter(convention).YearFraction(from, to)
+}
+
+// YearFractionDiff is a deprecated alias for YearFraction.
+func YearFractionDiff(from, to date.Date, convention Convention) float64 {
+	return YearFraction(from, to, convention)
+}
+
+// dayCounterFunc is a function that computes day-count fractions.
+type dayCounterFunc func(from, to date.Date) float64
+
+func newDayCounterFunc(convention Convention) dayCounterFunc {
 	switch convention {
 	case ActualActual:
-		return yearFractionActualActual(from, to)
+		return yearFractionActualActual
+
 	case ActualActualAFB:
-		return yearFractionActualActualAFB(from, to)
+		return yearFractionActualActualAFB
+
 	case ActualThreeSixty:
-		return yearFractionActualThreeSixty(from, to)
+		return yearFractionActualThreeSixty
+
 	case ActualThreeSixtyFiveFixed:
-		return yearFractionActualThreeSixtyFiveFixed(from, to)
+		return yearFractionActualThreeSixtyFiveFixed
+
 	case ThirtyThreeSixtyUS:
-		return yearFractionThirtyThreeSixtyUS(from, to)
+		return yearFractionThirtyThreeSixtyUS
+
 	case ThirtyThreeSixtyEuropean:
-		return yearFractionThirtyThreeSixtyEuropean(from, to)
+		return yearFractionThirtyThreeSixtyEuropean
+
 	case ThirtyThreeSixtyItalian:
-		return yearFractionThirtyThreeSixtyItalian(from, to)
+		return yearFractionThirtyThreeSixtyItalian
+
 	case ThirtyThreeSixtyGerman:
-		return yearFractionThirtyThreeSixtyGerman(from, to)
+		return yearFractionThirtyThreeSixtyGerman
+
 	default:
-		return yearFractionActualActual(from, to)
+		return yearFractionActualActual
 	}
 }
 
