@@ -41,7 +41,9 @@ func YearFraction(from, to date.Date, convention Convention) float64 {
 	return NewDayCounter(convention).YearFraction(from, to)
 }
 
-// YearFractionDiff is a deprecated alias for YearFraction.
+// YearFractionDiff is the same as YearFraction.
+//
+// Deprecated: YearFractionDiff is a mere, more redundant alias.
 func YearFractionDiff(from, to date.Date, convention Convention) float64 {
 	return YearFraction(from, to, convention)
 }
