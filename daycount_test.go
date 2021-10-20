@@ -83,16 +83,9 @@ func Test_YearFraction_ConsistencyWithDayCounter(t *testing.T) {
 	// is consistent with the closure implemented by a DayCounter
 	// on the same convention.
 
-	origin := date.New(2021, time.October, 1)
-
-	// Fuzz test dates by shifting the origin by a random duration.
-	f := fuzz.New().Funcs(
-		func(d *date.Date, c fuzz.Continue) {
-			*d = date.NewAt(origin.UTC().Add(time.Duration(c.Int63())))
-		},
-	)
-
 	const testDates = 100
+
+	origin := date.New(2021, time.October, 1)
 
 	for _, tc := range []struct {
 		name       string
@@ -134,6 +127,13 @@ func Test_YearFraction_ConsistencyWithDayCounter(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
+
+			// Fuzz test dates by shifting the origin by a random duration.
+			f := fuzz.New().Funcs(
+				func(d *date.Date, c fuzz.Continue) {
+					*d = date.NewAt(origin.UTC().Add(time.Duration(c.Int63())))
+				},
+			)
 
 			from, to := date.Date{}, date.Date{}
 			for i := 0; i < testDates; i++ {
