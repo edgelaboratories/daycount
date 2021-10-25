@@ -9,7 +9,7 @@ import (
 
 // DayCounter computes the year fraction between a from and a to date
 // according to a predefined day-count convention.
-// This function assumes that from is never later than to.
+// All DayCounter functions assume that from is never later than to.
 type DayCounter func(from, to date.Date) float64
 
 // NewDayCounter returns a DayCounter based on the input convention.
