@@ -5,12 +5,13 @@ import (
 	"time"
 
 	"github.com/fxtlabs/date"
+	fuzz "github.com/google/gofuzz"
 	"github.com/stretchr/testify/assert"
 )
 
 const epsilon = 1.0e-6
 
-func Test_YearFractionDiff(t *testing.T) {
+func Test_YearFraction(t *testing.T) {
 	t.Parallel()
 
 	from := date.New(2018, time.January, 1)
@@ -68,35 +69,115 @@ func Test_YearFractionDiff(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
+			assert.InEpsilon(t, tc.expected, YearFraction(from, to, tc.convention), epsilon)
+			// This check can be removed once YearFractionDiff has been deprecated.
 			assert.InEpsilon(t, tc.expected, YearFractionDiff(from, to, tc.convention), epsilon)
 		})
 	}
 }
 
-func Test_YearFractionDiff_DefaultConvention(t *testing.T) {
+func Test_YearFraction_ConsistencyWithDayCounter(t *testing.T) {
+	t.Parallel()
+
+	// This test verifies that the convenience function YearFraction
+	// is consistent with the closure implemented by a DayCounter
+	// on the same convention.
+
+	const testDates = 100
+
+	origin := date.New(2021, time.October, 1)
+
+	for _, tc := range []struct {
+		name       string
+		convention Convention
+	}{
+		{
+			"ActualActual",
+			ActualActual,
+		},
+		{
+			"ActualActualAFB",
+			ActualActualAFB,
+		},
+		{
+			"ActualThreeSixty",
+			ActualThreeSixty,
+		},
+		{
+			"ActualThreeSixtyFiveFixed",
+			ActualThreeSixtyFiveFixed,
+		},
+		{
+			"ThirtyThreeSixtyUS",
+			ThirtyThreeSixtyUS,
+		},
+		{
+			"ThirtyThreeSixtyEuropean",
+			ThirtyThreeSixtyEuropean,
+		},
+		{
+			"ThirtyThreeSixtyItalian",
+			ThirtyThreeSixtyItalian,
+		},
+		{
+			"ThirtyThreeSixtyGerman",
+			ThirtyThreeSixtyGerman,
+		},
+	} {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			// Fuzz test dates by shifting the origin by a random duration.
+			f := fuzz.New().Funcs(
+				func(d *date.Date, c fuzz.Continue) {
+					*d = date.NewAt(origin.UTC().Add(time.Duration(c.Int63())))
+				},
+				func(d *time.Duration, c fuzz.Continue) {
+					*d = time.Duration(c.Int63())
+				},
+			)
+
+			from, lag := date.Date{}, time.Duration(0)
+			for i := 0; i < testDates; i++ {
+				f.Fuzz(&from)
+				f.Fuzz(&lag)
+
+				to := date.NewAt(from.UTC().Add(lag))
+
+				assert.Equal(t,
+					NewDayCounter(tc.convention)(from, to),
+					YearFraction(from, to, tc.convention),
+				)
+			}
+		})
+	}
+}
+
+func Test_YearFraction_DefaultConvention(t *testing.T) {
 	t.Parallel()
 
 	from := date.New(2018, time.January, 1)
 	to := date.New(2018, time.July, 31)
 	expected := 211.0 / threeSixtyFiveDays
-	assert.InEpsilon(t, expected, YearFractionDiff(from, to, Convention(-1)), epsilon)
+	assert.InEpsilon(t, expected, YearFraction(from, to, Convention(-1)), epsilon)
 }
 
-func Test_YearFractionDiff_EqualDates(t *testing.T) {
+func Test_YearFraction_EqualDates(t *testing.T) {
 	t.Parallel()
 
 	from := date.New(2018, time.January, 1)
 	to := from
-	assert.Equal(t, 0.0, YearFractionDiff(from, to, ActualActual))
+	assert.Equal(t, 0.0, YearFraction(from, to, ActualActual))
 }
 
-func Test_YearFractionDiff_InvertedDates(t *testing.T) {
+func Test_YearFraction_InvertedDates(t *testing.T) {
 	t.Parallel()
 
 	from := date.New(2018, time.July, 31)
 	to := date.New(2018, time.January, 1)
 	expected := -211.0 / threeSixtyFiveDays
-	assert.InEpsilon(t, expected, YearFractionDiff(from, to, ActualActual), epsilon)
+	assert.InEpsilon(t, expected, YearFraction(from, to, ActualActual), epsilon)
 }
 
 func Test_yearFractionActualActual(t *testing.T) {

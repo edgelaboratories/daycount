@@ -7,42 +7,55 @@ import (
 	"github.com/fxtlabs/date"
 )
 
-// YearFractionDiff returns the year fraction difference between two dates
-// according to the input convention.
-// If the convention is not recognized, it defaults to ActualActual.
-func YearFractionDiff(from, to date.Date, convention Convention) float64 {
-	if to.Equal(from) {
-		return 0.0
-	}
+// DayCounter computes the year fraction between a from and a to date
+// according to a predefined day-count convention.
+// All DayCounter functions assume that from is never later than to.
+type DayCounter func(from, to date.Date) float64
 
-	if from.After(to) {
-		return -YearFractionDiff(to, from, convention)
-	}
-
-	return yearFractionDiff(from, to, convention)
-}
-
-func yearFractionDiff(from, to date.Date, convention Convention) float64 {
+// NewDayCounter returns a DayCounter based on the input convention.
+func NewDayCounter(convention Convention) DayCounter {
 	switch convention {
 	case ActualActual:
-		return yearFractionActualActual(from, to)
+		return yearFractionActualActual
+
 	case ActualActualAFB:
-		return yearFractionActualActualAFB(from, to)
+		return yearFractionActualActualAFB
+
 	case ActualThreeSixty:
-		return yearFractionActualThreeSixty(from, to)
+		return yearFractionActualThreeSixty
+
 	case ActualThreeSixtyFiveFixed:
-		return yearFractionActualThreeSixtyFiveFixed(from, to)
+		return yearFractionActualThreeSixtyFiveFixed
+
 	case ThirtyThreeSixtyUS:
-		return yearFractionThirtyThreeSixtyUS(from, to)
+		return yearFractionThirtyThreeSixtyUS
+
 	case ThirtyThreeSixtyEuropean:
-		return yearFractionThirtyThreeSixtyEuropean(from, to)
+		return yearFractionThirtyThreeSixtyEuropean
+
 	case ThirtyThreeSixtyItalian:
-		return yearFractionThirtyThreeSixtyItalian(from, to)
+		return yearFractionThirtyThreeSixtyItalian
+
 	case ThirtyThreeSixtyGerman:
-		return yearFractionThirtyThreeSixtyGerman(from, to)
+		return yearFractionThirtyThreeSixtyGerman
+
 	default:
-		return yearFractionActualActual(from, to)
+		return yearFractionActualActual
 	}
+}
+
+// YearFraction returns the year fraction difference between two dates
+// according to the input convention.
+// If the convention is not recognized, it defaults to ActualActual.
+func YearFraction(from, to date.Date, convention Convention) float64 {
+	return NewDayCounter(convention)(from, to)
+}
+
+// YearFractionDiff is the same as YearFraction.
+//
+// Deprecated: YearFractionDiff is an alias for YearFraction.
+func YearFractionDiff(from, to date.Date, convention Convention) float64 {
+	return YearFraction(from, to, convention)
 }
 
 const (
