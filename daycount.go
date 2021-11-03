@@ -51,13 +51,6 @@ func YearFraction(from, to date.Date, convention Convention) float64 {
 	return NewDayCounter(convention)(from, to)
 }
 
-// YearFractionDiff is the same as YearFraction.
-//
-// Deprecated: YearFractionDiff is an alias for YearFraction.
-func YearFractionDiff(from, to date.Date, convention Convention) float64 {
-	return YearFraction(from, to, convention)
-}
-
 const (
 	threeSixtyDays     = 360.0
 	threeSixtyFiveDays = 365.0
