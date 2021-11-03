@@ -70,8 +70,6 @@ func Test_YearFraction(t *testing.T) {
 			t.Parallel()
 
 			assert.InEpsilon(t, tc.expected, YearFraction(from, to, tc.convention), epsilon)
-			// This check can be removed once YearFractionDiff has been deprecated.
-			assert.InEpsilon(t, tc.expected, YearFractionDiff(from, to, tc.convention), epsilon)
 		})
 	}
 }
