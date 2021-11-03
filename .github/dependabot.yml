@@ -4,7 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-      time: "04:00"
-    reviewers:
-      - antonioiubatti93
-    open-pull-requests-limit: 10
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: daily
