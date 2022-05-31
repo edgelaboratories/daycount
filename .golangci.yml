@@ -12,6 +12,7 @@ linters:
     - maligned #deprecated
     - golint #deprecated
     - interfacer #deprecated
+    - varnamelen
 
 issues:
   exclude-rules:
