@@ -20,53 +20,45 @@ func Test_YearFraction(t *testing.T) {
 	thirtyThreeSixtyDiff := (threeSixtyDays*0.0 + 30.0*5.0 + 29.0 + 30.0) / threeSixtyDays
 
 	for _, tc := range []struct {
-		name       string
 		convention Convention
 		expected   float64
 	}{
 		{
-			"actual actual",
 			ActualActual,
 			dayDiff / threeSixtyFiveDays,
 		},
 		{
-			"actual actual afb",
 			ActualActualAFB,
 			dayDiff / threeSixtyFiveDays,
 		},
 		{
-			"actual 360",
 			ActualThreeSixty,
 			dayDiff / threeSixtyDays,
 		},
 		{
-			"actual 365 fixed",
 			ActualThreeSixtyFiveFixed,
 			dayDiff / threeSixtyFiveDays,
 		},
 		{
-			"30 360 us",
 			ThirtyThreeSixtyUS,
 			(30.0*5.0 + 29.0 + 30.0 + 1.0) / threeSixtyDays,
 		},
 		{
-			"30 360 european",
 			ThirtyThreeSixtyEuropean,
 			thirtyThreeSixtyDiff,
 		},
 		{
-			"30 360 italian",
 			ThirtyThreeSixtyItalian,
 			thirtyThreeSixtyDiff,
 		},
 		{
-			"30 360 german",
 			ThirtyThreeSixtyGerman,
 			thirtyThreeSixtyDiff,
 		},
 	} {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+		tc, name := tc, tc.convention.String()
+
+		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
 			assert.InEpsilon(t, tc.expected, YearFraction(from, to, tc.convention), epsilon)
