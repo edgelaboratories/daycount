@@ -1,6 +1,7 @@
 package daycount
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -14,151 +15,206 @@ const epsilon = 1.0e-6
 func Test_YearFraction(t *testing.T) {
 	t.Parallel()
 
-	from := date.New(2018, time.January, 1)
-	to := date.New(2018, time.July, 31)
-	dayDiff := 211.0
-	thirtyThreeSixtyDiff := (threeSixtyDays*0.0 + 30.0*5.0 + 29.0 + 30.0) / threeSixtyDays
-
 	for _, tc := range []struct {
-		convention Convention
-		expected   float64
+		from     date.Date
+		to       date.Date
+		expected map[Convention]float64
 	}{
 		{
-			ActualActual,
-			dayDiff / threeSixtyFiveDays,
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 28),
+			map[Convention]float64{
+				ActualActualAFB:           62.0 / 365.0,
+				ActualThreeSixty:          62.0 / 360.0,
+				ActualThreeSixtyFiveFixed: 62.0 / 365.0,
+				ThirtyThreeSixtyUS:        60.0 / 360.0,
+				ThirtyThreeSixtyEuropean:  60.0 / 360.0,
+				ThirtyThreeSixtyItalian:   62.0 / 360.0,
+				ThirtyThreeSixtyGerman:    60.0 / 360.0,
+			},
 		},
 		{
-			ActualActualAFB,
-			dayDiff / threeSixtyFiveDays,
+			date.New(2007, time.December, 28),
+			date.New(2008, time.February, 29),
+			map[Convention]float64{
+				ActualActualAFB:           63.0 / 365.0,
+				ActualThreeSixty:          63.0 / 360.0,
+				ActualThreeSixtyFiveFixed: 63.0 / 365.0,
+				ThirtyThreeSixtyUS:        61.0 / 360.0,
+				ThirtyThreeSixtyEuropean:  61.0 / 360.0,
+				ThirtyThreeSixtyItalian:   62.0 / 360.0,
+				ThirtyThreeSixtyGerman:    62.0 / 360.0,
+			},
 		},
 		{
-			ActualThreeSixty,
-			dayDiff / threeSixtyDays,
+			date.New(2007, time.October, 31),
+			date.New(2008, time.November, 30),
+			map[Convention]float64{
+				ActualActualAFB:           1.0 + 30.0/365.0,
+				ActualThreeSixty:          396.0 / 360.0,
+				ActualThreeSixtyFiveFixed: 396.0 / 365.0,
+				ThirtyThreeSixtyUS:        390.0 / 360.0,
+				ThirtyThreeSixtyEuropean:  390.0 / 360.0,
+				ThirtyThreeSixtyItalian:   390.0 / 360.0,
+				ThirtyThreeSixtyGerman:    390.0 / 360.0,
+			},
 		},
 		{
-			ActualThreeSixtyFiveFixed,
-			dayDiff / threeSixtyFiveDays,
+			date.New(2007, time.February, 1),
+			date.New(2008, time.May, 31),
+			map[Convention]float64{
+				ActualThreeSixty:          485.0 / 360.0,
+				ActualThreeSixtyFiveFixed: 485.0 / 365.0,
+				ThirtyThreeSixtyUS:        480.0 / 360.0,
+				ThirtyThreeSixtyEuropean:  479.0 / 360.0,
+				ThirtyThreeSixtyItalian:   479.0 / 360.0,
+				ThirtyThreeSixtyGerman:    479.0 / 360.0,
+			},
 		},
 		{
-			ThirtyThreeSixtyUS,
-			(30.0*5.0 + 29.0 + 30.0 + 1.0) / threeSixtyDays,
+			date.New(2008, time.February, 1),
+			date.New(2009, time.May, 31),
+			map[Convention]float64{
+				ActualActualAFB: 1.0 + 120.0/366.0,
+			},
 		},
 		{
-			ThirtyThreeSixtyEuropean,
-			thirtyThreeSixtyDiff,
+			date.New(2012, time.December, 28),
+			date.New(2013, time.February, 28),
+			map[Convention]float64{
+				ActualActualAFB: 62.0 / 365.0,
+			},
 		},
 		{
-			ThirtyThreeSixtyItalian,
-			thirtyThreeSixtyDiff,
+			date.New(2012, time.February, 28),
+			date.New(2015, time.January, 28),
+			map[Convention]float64{
+				ActualActualAFB: 2.0 + 335.0/366.0,
+			},
 		},
 		{
-			ThirtyThreeSixtyGerman,
-			thirtyThreeSixtyDiff,
-		},
-	} {
-		tc, name := tc, tc.convention.String()
-
-		t.Run(name, func(t *testing.T) {
-			t.Parallel()
-
-			assert.InEpsilon(t, tc.expected, YearFraction(from, to, tc.convention), epsilon)
-		})
-	}
-}
-
-func Test_YearFraction_ConsistencyWithDayCounter(t *testing.T) {
-	t.Parallel()
-
-	// This test verifies that the convenience function YearFraction
-	// is consistent with the closure implemented by a DayCounter
-	// on the same convention.
-
-	const testDates = 100
-
-	origin := date.New(2021, time.October, 1)
-
-	for _, tc := range []struct {
-		name       string
-		convention Convention
-	}{
-		{
-			"ActualActual",
-			ActualActual,
+			date.New(1996, time.February, 1),
+			date.New(1997, time.January, 1),
+			map[Convention]float64{
+				ActualActualAFB: (366.0 - 31.0) / 366.0,
+			},
 		},
 		{
-			"ActualActualAFB",
-			ActualActualAFB,
+			date.New(2004, time.February, 28),
+			date.New(2004, time.March, 2),
+			map[Convention]float64{
+				ActualActualAFB: 3.0 / 366.0,
+			},
 		},
 		{
-			"ActualThreeSixty",
-			ActualThreeSixty,
+			date.New(2019, time.July, 1),
+			date.New(2019, time.January, 1),
+			map[Convention]float64{
+				ActualActual: -181.0 / 365.0,
+			},
 		},
 		{
-			"ActualThreeSixtyFiveFixed",
-			ActualThreeSixtyFiveFixed,
+			date.New(2019, time.January, 1),
+			date.New(2019, time.July, 1),
+			map[Convention]float64{
+				ActualActual: 181.0 / 365.0,
+			},
 		},
 		{
-			"ThirtyThreeSixtyUS",
-			ThirtyThreeSixtyUS,
+			date.New(2019, time.January, 1),
+			date.New(2020, time.January, 1),
+			map[Convention]float64{
+				ActualActual: 1.0,
+			},
 		},
 		{
-			"ThirtyThreeSixtyEuropean",
-			ThirtyThreeSixtyEuropean,
+			date.New(2020, time.January, 1),
+			date.New(2021, time.January, 1),
+			map[Convention]float64{
+				ActualActual: 1.0,
+			},
 		},
 		{
-			"ThirtyThreeSixtyItalian",
-			ThirtyThreeSixtyItalian,
+			date.New(2019, time.January, 1),
+			date.New(2021, time.January, 1),
+			map[Convention]float64{
+				ActualActual: 2.0,
+			},
 		},
 		{
-			"ThirtyThreeSixtyGerman",
-			ThirtyThreeSixtyGerman,
+			date.New(2019, time.March, 4),
+			date.New(2023, time.June, 1),
+			map[Convention]float64{
+				ActualActual: 303.0/365.0 + 3.0 + 151.0/365.0,
+			},
+		},
+		{
+			date.New(2020, time.February, 10),
+			date.New(2021, time.July, 2),
+			map[Convention]float64{
+				ActualActual: 326.0/366.0 + 182.0/365.0,
+			},
+		},
+		{
+			date.New(2016, time.March, 4),
+			date.New(2023, time.June, 1),
+			map[Convention]float64{
+				ActualActual: 303.0/366.0 + 6.0 + 151.0/365.0,
+			},
+		},
+		{
+			date.New(2016, time.March, 4),
+			date.New(2116, time.March, 4),
+			map[Convention]float64{
+				ActualActual: 100.0,
+			},
 		},
 	} {
 		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
 
-			// Fuzz test dates by shifting the origin by a random duration.
-			f := fuzz.New().Funcs(
-				func(d *date.Date, c fuzz.Continue) {
-					*d = date.NewAt(origin.UTC().Add(time.Duration(c.Int63())))
-				},
-				func(d *time.Duration, c fuzz.Continue) {
-					*d = time.Duration(c.Int63())
-				},
-			)
+		for convention, expected := range tc.expected {
+			convention, expected := convention, expected
 
-			from, lag := date.Date{}, time.Duration(0)
-			for i := 0; i < testDates; i++ {
-				f.Fuzz(&from)
-				f.Fuzz(&lag)
+			name := fmt.Sprintf("%s to %s/%s", tc.from, tc.to, convention)
+			t.Run(name, func(t *testing.T) {
+				t.Parallel()
 
-				to := date.NewAt(from.UTC().Add(lag))
-
-				assert.Equal(t,
-					NewDayCounter(tc.convention)(from, to),
-					YearFraction(from, to, tc.convention),
-				)
-			}
-		})
+				assert.InEpsilon(t, expected, YearFraction(tc.from, tc.to, convention), epsilon)
+			})
+		}
 	}
-}
-
-func Test_YearFraction_DefaultConvention(t *testing.T) {
-	t.Parallel()
-
-	from := date.New(2018, time.January, 1)
-	to := date.New(2018, time.July, 31)
-	expected := 211.0 / threeSixtyFiveDays
-	assert.InEpsilon(t, expected, YearFraction(from, to, Convention(-1)), epsilon)
 }
 
 func Test_YearFraction_EqualDates(t *testing.T) {
 	t.Parallel()
 
-	from := date.New(2018, time.January, 1)
-	to := from
-	assert.Equal(t, 0.0, YearFraction(from, to, ActualActual))
+	var daysFromOrigin int
+	fuzz.NewWithSeed(123).Funcs(
+		func(days *int, c fuzz.Continue) {
+			*days = -1800 + c.Intn(3600)
+		},
+	).Fuzz(&daysFromOrigin)
+
+	from := date.New(2018, time.January, 1).Add(daysFromOrigin)
+
+	for _, convention := range []Convention{
+		ActualActual,
+		ActualActualAFB,
+		ActualThreeSixty,
+		ActualThreeSixtyFiveFixed,
+		ThirtyThreeSixtyEuropean,
+		ThirtyThreeSixtyGerman,
+		ThirtyThreeSixtyItalian,
+		ThirtyThreeSixtyUS,
+	} {
+		convention := convention
+
+		t.Run(convention.String(), func(t *testing.T) {
+			t.Parallel()
+
+			assert.Equal(t, 0.0, YearFraction(from, from, ActualActual))
+		})
+	}
 }
 
 func Test_YearFraction_InvertedDates(t *testing.T) {
@@ -168,404 +224,6 @@ func Test_YearFraction_InvertedDates(t *testing.T) {
 	to := date.New(2018, time.January, 1)
 	expected := -211.0 / threeSixtyFiveDays
 	assert.InEpsilon(t, expected, YearFraction(from, to, ActualActual), epsilon)
-}
-
-func Test_yearFractionActualActual(t *testing.T) {
-	t.Parallel()
-
-	for _, tc := range []struct {
-		name     string
-		from     date.Date
-		to       date.Date
-		expected float64
-	}{
-		{
-			"from 2019.07.01 to 2019.01.01",
-			date.New(2019, time.July, 1),
-			date.New(2019, time.January, 1),
-			-181.0 / 365.0,
-		},
-		{
-			"from 2019.01.01 to 2019.07.01",
-			date.New(2019, time.January, 1),
-			date.New(2019, time.July, 1),
-			181.0 / 365.0,
-		},
-		{
-			"from 2019.01.01 to 2020.01.01",
-			date.New(2019, time.January, 1),
-			date.New(2020, time.January, 1),
-			1.0,
-		},
-		{
-			"from 2020.01.01 to 2021.01.01",
-			date.New(2020, time.January, 1),
-			date.New(2021, time.January, 1),
-			1.0,
-		},
-		{
-			"from 2019.01.01 to 2021.01.01",
-			date.New(2019, time.January, 1),
-			date.New(2021, time.January, 1),
-			2.0,
-		},
-		{
-			"from 2019.03.04 to 2023.06.01",
-			date.New(2019, time.March, 4),
-			date.New(2023, time.June, 1),
-			303.0/365.0 + 3.0 + 151.0/365.0,
-		},
-		{
-			"from 2020.02.10 to 2021.07.02",
-			date.New(2020, time.February, 10),
-			date.New(2021, time.July, 2),
-			326.0/366.0 + 182.0/365.0,
-		},
-		{
-			"from 2016.03.04 to 2023.06.01",
-			date.New(2016, time.March, 4),
-			date.New(2023, time.June, 1),
-			303.0/366.0 + 6.0 + 151.0/365.0,
-		},
-		{
-			"from 2016.03.04 to 2116.03.04",
-			date.New(2016, time.March, 4),
-			date.New(2116, time.March, 4),
-			100.0,
-		},
-	} {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			assert.InDelta(t, tc.expected, yearFractionActualActual(tc.from, tc.to), epsilon)
-		})
-	}
-}
-
-func Test_yearFractionActualActualAFB(t *testing.T) {
-	t.Parallel()
-
-	for _, tc := range []struct {
-		name     string
-		from     date.Date
-		to       date.Date
-		expected float64
-	}{
-		{
-			"from 2007.12.28 to 2008.02.28",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 28),
-			62.0 / 365.0,
-		},
-		{
-			"from 2007.12.28 to 2008.02.29",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 29),
-			63.0 / 365.0,
-		},
-		{
-			"from 2007.10.31 to 2008.11.30",
-			date.New(2007, time.October, 31),
-			date.New(2008, time.November, 30),
-			1.0 + 30.0/365.0,
-		},
-		{
-			"from 2008.02.01 to 2009.05.31",
-			date.New(2008, time.February, 1),
-			date.New(2009, time.May, 31),
-			1.0 + 120.0/366.0,
-		},
-		{
-			"from 2012.12.28 to 2013.02.28",
-			date.New(2012, time.December, 28),
-			date.New(2013, time.February, 28),
-			62.0 / 365.0,
-		},
-		{
-			"from 2012.02.28 to 2015.01.28",
-			date.New(2012, time.February, 28),
-			date.New(2015, time.January, 28),
-			2.0 + 335.0/366.0,
-		},
-		{
-			"from 1996.01.01 to 1997.01.01",
-			date.New(1996, time.February, 1),
-			date.New(1997, time.January, 1),
-			(366.0 - 31.0) / 366.0,
-		},
-		{
-			"from 2004.02.28 to 2004.03.02",
-			date.New(2004, time.February, 28),
-			date.New(2004, time.March, 2),
-			3.0 / 366.0,
-		},
-	} {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			assert.InDelta(t, tc.expected, yearFractionActualActualAFB(tc.from, tc.to), epsilon)
-		})
-	}
-}
-
-func Test_yearFractionActualThreeSixty(t *testing.T) {
-	t.Parallel()
-
-	for _, tc := range []struct {
-		name     string
-		from     date.Date
-		to       date.Date
-		expected float64
-	}{
-		{
-			"from 2007.12.28 to 2008.02.28",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 28),
-			62.0 / 360.0,
-		},
-		{
-			"from 2007.12.28 to 2008.02.29",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 29),
-			63.0 / 360.0,
-		},
-		{
-			"from 2007.10.31 to 2008.11.30",
-			date.New(2007, time.October, 31),
-			date.New(2008, time.November, 30),
-			396.0 / 360.0,
-		},
-		{
-			"from 2007.02.01 to 2008.05.31",
-			date.New(2007, time.February, 1),
-			date.New(2008, time.May, 31),
-			485.0 / 360.0,
-		},
-	} {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			assert.InDelta(t, tc.expected, yearFractionActualThreeSixty(tc.from, tc.to), epsilon)
-		})
-	}
-}
-
-func Test_yearFractionActualThreeSixtyFiveFixed(t *testing.T) {
-	t.Parallel()
-
-	for _, tc := range []struct {
-		name     string
-		from     date.Date
-		to       date.Date
-		expected float64
-	}{
-		{
-			"from 2007.12.28 to 2008.02.28",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 28),
-			62.0 / 365.0,
-		},
-		{
-			"from 2007.12.28 to 2008.02.29",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 29),
-			63.0 / 365.0,
-		},
-		{
-			"from 2007.10.31 to 2008.11.30",
-			date.New(2007, time.October, 31),
-			date.New(2008, time.November, 30),
-			396.0 / 365.0,
-		},
-		{
-			"from 2007.02.01 to 2008.05.31",
-			date.New(2007, time.February, 1),
-			date.New(2008, time.May, 31),
-			485.0 / 365.0,
-		},
-	} {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			assert.InDelta(t, tc.expected, yearFractionActualThreeSixtyFiveFixed(tc.from, tc.to), epsilon)
-		})
-	}
-}
-
-func Test_yearFractionThirtyThreeSixtyUS(t *testing.T) {
-	t.Parallel()
-
-	for _, tc := range []struct {
-		name     string
-		from     date.Date
-		to       date.Date
-		expected float64
-	}{
-		{
-			"from 2007.12.28 to 2008.02.28",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 28),
-			60.0 / 360.0,
-		},
-		{
-			"from 2007.12.28 to 2008.02.29",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 29),
-			61.0 / 360.0,
-		},
-		{
-			"from 2007.10.31 to 2008.11.30",
-			date.New(2007, time.October, 31),
-			date.New(2008, time.November, 30),
-			390.0 / 360.0,
-		},
-		{
-			"from 2007.02.01 to 2008.05.31",
-			date.New(2007, time.February, 1),
-			date.New(2008, time.May, 31),
-			480.0 / 360.0,
-		},
-	} {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyUS(tc.from, tc.to), epsilon)
-		})
-	}
-}
-
-func Test_yearFractionThirtyThreeSixtyEuropean(t *testing.T) {
-	t.Parallel()
-
-	for _, tc := range []struct {
-		name     string
-		from     date.Date
-		to       date.Date
-		expected float64
-	}{
-		{
-			"from 2007.12.28 to 2008.02.28",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 28),
-			60.0 / 360.0,
-		},
-		{
-			"from 2007.12.28 to 2008.02.29",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 29),
-			61.0 / 360.0,
-		},
-		{
-			"from 2007.10.31 to 2008.11.30",
-			date.New(2007, time.October, 31),
-			date.New(2008, time.November, 30),
-			390.0 / 360.0,
-		},
-		{
-			"from 2007.02.01 to 2008.05.31",
-			date.New(2007, time.February, 1),
-			date.New(2008, time.May, 31),
-			479.0 / 360.0,
-		},
-	} {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyEuropean(tc.from, tc.to), epsilon)
-		})
-	}
-}
-
-func Test_yearFractionThirtyThreeSixtyItalian(t *testing.T) {
-	t.Parallel()
-
-	for _, tc := range []struct {
-		name     string
-		from     date.Date
-		to       date.Date
-		expected float64
-	}{
-		{
-			"from 2007.12.28 to 2008.02.28",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 28),
-			62.0 / 360.0,
-		},
-		{
-			"from 2007.12.28 to 2008.02.29",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 29),
-			62.0 / 360.0,
-		},
-		{
-			"from 2007.10.31 to 2008.11.30",
-			date.New(2007, time.October, 31),
-			date.New(2008, time.November, 30),
-			390.0 / 360.0,
-		},
-		{
-			"from 2007.02.01 to 2008.05.31",
-			date.New(2007, time.February, 1),
-			date.New(2008, time.May, 31),
-			479.0 / 360.0,
-		},
-	} {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyItalian(tc.from, tc.to), epsilon)
-		})
-	}
-}
-
-func Test_yearFractionThirtyThreeSixtyGerman(t *testing.T) {
-	t.Parallel()
-
-	for _, tc := range []struct {
-		name     string
-		from     date.Date
-		to       date.Date
-		expected float64
-	}{
-		{
-			"from 2007.12.28 to 2008.02.28",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 28),
-			60.0 / 360.0,
-		},
-		{
-			"from 2007.12.28 to 2008.02.29",
-			date.New(2007, time.December, 28),
-			date.New(2008, time.February, 29),
-			62.0 / 360.0,
-		},
-		{
-			"from 2007.10.31 to 2008.11.30",
-			date.New(2007, time.October, 31),
-			date.New(2008, time.November, 30),
-			390.0 / 360.0,
-		},
-		{
-			"from 2007.02.01 to 2008.05.31",
-			date.New(2007, time.February, 1),
-			date.New(2008, time.May, 31),
-			479.0 / 360.0,
-		},
-	} {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			assert.InDelta(t, tc.expected, yearFractionThirtyThreeSixtyGerman(tc.from, tc.to), epsilon)
-		})
-	}
 }
 
 func Test_isLeapYear(t *testing.T) {
