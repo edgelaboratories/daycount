@@ -15,9 +15,6 @@ type DayCounter func(from, to date.Date) float64
 // NewDayCounter returns a DayCounter based on the input convention.
 func NewDayCounter(convention Convention) DayCounter {
 	switch convention {
-	case ActualActual:
-		return yearFractionActualActual
-
 	case ActualActualAFB:
 		return yearFractionActualActualAFB
 
@@ -38,6 +35,9 @@ func NewDayCounter(convention Convention) DayCounter {
 
 	case ThirtyThreeSixtyGerman:
 		return yearFractionThirtyThreeSixtyGerman
+
+	case ActualActual:
+		fallthrough
 
 	default:
 		return yearFractionActualActual
