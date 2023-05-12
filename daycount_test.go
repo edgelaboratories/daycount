@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const epsilon = 1.0e-6
+const epsilon = 1.0e-15
 
 func Test_YearFraction(t *testing.T) {
 	t.Parallel()
@@ -183,6 +183,21 @@ func Test_YearFraction(t *testing.T) {
 			})
 		}
 	}
+}
+
+func Test_YearFraction_outOfRangeConvention(t *testing.T) {
+	t.Parallel()
+
+	var (
+		from = date.Today()
+		to   = from.AddDate(1, 0, 0)
+	)
+
+	assert.InEpsilon(t,
+		YearFraction(from, to, ActualActual),
+		YearFraction(from, to, outOfRangeConvention),
+		epsilon,
+	)
 }
 
 func Test_YearFraction_EqualDates(t *testing.T) {
