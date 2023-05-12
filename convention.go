@@ -1,7 +1,6 @@
 package daycount
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -44,10 +43,18 @@ const (
 	// If the first date is the last day of February, then it is changed to the 1st of March.
 	// If the second date is the last day of February, then it is changed to the 1st of March.
 	ThirtyThreeSixtyGerman
+
+	// outOfRangeConvention is a sentinel value that allows to bound
+	// the range of allowed conventions. Add new conventions before it.
+	outOfRangeConvention
 )
 
 // String returns the convention name.
 func (d Convention) String() string {
+	if d < ActualActual || d >= outOfRangeConvention {
+		return "Unsupported"
+	}
+
 	return [...]string{
 		"ActualActual",
 		"ActualActualAFB",
@@ -65,20 +72,28 @@ func Parse(convention string) (Convention, error) {
 	switch convention {
 	case "ActualActual":
 		return ActualActual, nil
+
 	case "ActualActualAFB":
 		return ActualActualAFB, nil
+
 	case "ActualThreeSixty":
 		return ActualThreeSixty, nil
+
 	case "ActualThreeSixtyFiveFixed":
 		return ActualThreeSixtyFiveFixed, nil
+
 	case "ThirtyThreeSixtyUS":
 		return ThirtyThreeSixtyUS, nil
+
 	case "ThirtyThreeSixtyEuropean":
 		return ThirtyThreeSixtyEuropean, nil
+
 	case "ThirtyThreeSixtyItalian":
 		return ThirtyThreeSixtyItalian, nil
+
 	case "ThirtyThreeSixtyGerman":
 		return ThirtyThreeSixtyGerman, nil
+
 	default:
 		return -1, fmt.Errorf("unrecognized daycount convention %s", convention)
 	}
@@ -102,7 +117,5 @@ func (d *Convention) UnmarshalJSON(b []byte) error {
 
 // MarshalJSON implements the JSON marshaler.
 func (d Convention) MarshalJSON() ([]byte, error) {
-	return bytes.NewBufferString(
-		fmt.Sprintf(`"%s"`, d.String()),
-	).Bytes(), nil
+	return []byte(fmt.Sprintf(`"%s"`, d.String())), nil
 }

@@ -36,7 +36,7 @@ func NewDayCounter(convention Convention) DayCounter {
 	case ThirtyThreeSixtyGerman:
 		return yearFractionThirtyThreeSixtyGerman
 
-	case ActualActual:
+	case ActualActual, outOfRangeConvention:
 		fallthrough
 
 	default:

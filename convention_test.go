@@ -46,6 +46,10 @@ func Test_Convention_String(t *testing.T) {
 			"ThirtyThreeSixtyGerman",
 			ThirtyThreeSixtyGerman,
 		},
+		{
+			"Unsupported",
+			Convention(666),
+		},
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
