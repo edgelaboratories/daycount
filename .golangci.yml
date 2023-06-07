@@ -25,6 +25,7 @@ linters:
     - rowserrcheck
     - sqlclosecheck
     - wastedassign
+    - depguard # Replaced by gomodguard
 
 issues:
   exclude-rules:
@@ -32,3 +33,9 @@ issues:
     - path: _test\.go
       linters:
         - testpackage
+
+linters-settings:
+  gomodguard:
+    blocked:
+      modules:
+        - github.com/pkg/errors:
