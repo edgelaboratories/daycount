@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_Convention_String(t *testing.T) {
@@ -74,7 +75,7 @@ func Test_Parse(t *testing.T) {
 		ThirtyThreeSixtyGerman,
 	} {
 		output, err := Parse(convention.String())
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, convention, output)
 	}
 }
@@ -83,7 +84,7 @@ func Test_Parse_UnknownConvention(t *testing.T) {
 	t.Parallel()
 
 	_, err := Parse("UnknownConvention")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func Test_Convention_UnmarshalJSON(t *testing.T) {
@@ -92,7 +93,7 @@ func Test_Convention_UnmarshalJSON(t *testing.T) {
 	var d struct {
 		Convention Convention `json:"convention"`
 	}
-	assert.NoError(t, json.Unmarshal([]byte(`{"convention": "ActualActual"}`), &d))
+	require.NoError(t, json.Unmarshal([]byte(`{"convention": "ActualActual"}`), &d))
 	assert.Equal(t, ActualActual, d.Convention)
 }
 
@@ -119,7 +120,7 @@ func Test_Convention_UnmarshalJSON_Invalid(t *testing.T) {
 			var d struct {
 				Convention Convention `json:"convention"`
 			}
-			assert.Error(t, json.Unmarshal([]byte(tc.input), &d))
+			require.Error(t, json.Unmarshal([]byte(tc.input), &d))
 		})
 	}
 }
@@ -132,6 +133,6 @@ func Test_Convention_MarshalJSON(t *testing.T) {
 	}{
 		Convention: ThirtyThreeSixtyEuropean,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, []byte(`{"convention":"ThirtyThreeSixtyEuropean"}`), output)
 }
