@@ -203,8 +203,6 @@ func Test_YearFraction_outOfRangeConvention(t *testing.T) {
 func Test_YearFraction_EqualDates(t *testing.T) {
 	t.Parallel()
 
-	const tol = 1e-15
-
 	var daysFromOrigin int
 	fuzz.NewWithSeed(123).Funcs(
 		func(days *int, c fuzz.Continue) {
@@ -229,7 +227,7 @@ func Test_YearFraction_EqualDates(t *testing.T) {
 		t.Run(convention.String(), func(t *testing.T) {
 			t.Parallel()
 
-			assert.InDelta(t, 0.0, YearFraction(from, from, ActualActual), tol)
+			assert.Equal(t, 0.0, YearFraction(from, from, ActualActual))
 		})
 	}
 }
@@ -282,8 +280,6 @@ func Test_isLeapYear(t *testing.T) {
 func Test_daysPerYear(t *testing.T) {
 	t.Parallel()
 
-	const tol = 1e-15
-
-	assert.InDelta(t, threeSixtyFiveDays, daysPerYear(2015), tol)
-	assert.InDelta(t, threeSixtySixDays, daysPerYear(2000), tol)
+	assert.Equal(t, threeSixtyFiveDays, daysPerYear(2015))
+	assert.Equal(t, threeSixtySixDays, daysPerYear(2000))
 }
