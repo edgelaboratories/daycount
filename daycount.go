@@ -75,8 +75,9 @@ func yearFractionActualActualAFB(from, to date.Date) float64 {
 	remaining := to
 	for tmp := to; tmp.After(from); {
 		tmp = tmp.AddDate(-1, 0, 0)
+		year, month, day := tmp.Date()
 
-		if tmp.Day() == 28 && tmp.Month() == time.February && isLeapYear(tmp.Year()) {
+		if day == 28 && month == time.February && isLeapYear(year) {
 			tmp = tmp.Add(1)
 		}
 
@@ -90,15 +91,17 @@ func yearFractionActualActualAFB(from, to date.Date) float64 {
 }
 
 func computeYearDurationAFB(from, remaining date.Date) float64 {
-	if isLeapYear(remaining.Year()) {
-		date := date.New(remaining.Year(), time.February, 29)
+	remainingYear := remaining.Year()
+	if isLeapYear(remainingYear) {
+		date := date.New(remainingYear, time.February, 29)
 		if remaining.After(date) && !from.After(date) {
 			return threeSixtySixDays
 		}
 	}
 
-	if isLeapYear(from.Year()) {
-		date := date.New(from.Year(), time.February, 29)
+	fromYear := from.Year()
+	if isLeapYear(fromYear) {
+		date := date.New(fromYear, time.February, 29)
 		if remaining.After(date) && !from.After(date) {
 			return threeSixtySixDays
 		}
@@ -129,8 +132,9 @@ func yearFractionThirtyThreeSixtyEuropean(from, to date.Date) float64 {
 
 func yearFractionThirtyThreeSixtyItalian(from, to date.Date) float64 {
 	shift := func(d date.Date) int {
-		if d.Month() == time.February && d.Day() > 27 {
-			return 30 - d.Day()
+		_, month, day := d.Date()
+		if month == time.February && day > 27 {
+			return 30 - day
 		}
 
 		return 0
@@ -143,7 +147,9 @@ func yearFractionThirtyThreeSixtyItalian(from, to date.Date) float64 {
 
 func yearFractionThirtyThreeSixtyGerman(from, to date.Date) float64 {
 	shift := func(d date.Date) int {
-		if tmp := d.Add(1); tmp.Month() == time.March && tmp.Day() == 1 {
+		tmp := d.Add(1)
+		_, month, day := tmp.Date()
+		if month == time.March && day == 1 {
 			return 1
 		}
 
@@ -156,9 +162,12 @@ func yearFractionThirtyThreeSixtyGerman(from, to date.Date) float64 {
 }
 
 func yearFractionThirtyThreeSixty(from, to date.Date, dayShift int) float64 {
-	yearDiff := float64(360 * (to.Year() - from.Year()))
-	monthDiff := float64(30 * (to.Month() - from.Month() - 1))
-	dayDiff := math.Max(0, float64(30-from.Day())) + math.Min(30, float64(to.Day()))
+	fromYear, fromMonth, fromDay := from.Date()
+	toYear, toMonth, toDay := to.Date()
+
+	yearDiff := float64(360 * (toYear - fromYear))
+	monthDiff := float64(30 * (toMonth - fromMonth - 1))
+	dayDiff := math.Max(0, float64(30-fromDay)) + math.Min(30, float64(toDay))
 
 	return (yearDiff + monthDiff + dayDiff + float64(dayShift)) / threeSixtyDays
 }
