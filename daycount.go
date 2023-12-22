@@ -5,12 +5,47 @@ import (
 	"time"
 
 	"github.com/fxtlabs/date"
+	"github.com/hashicorp/golang-lru/v2/expirable"
 )
 
 // DayCounter computes the year fraction between a from and a to date
 // according to a predefined day-count convention.
 // All DayCounter functions assume that from is never later than to.
 type DayCounter func(from, to date.Date) float64
+
+// YearFraction returns the year fraction difference between two dates
+// according to the input convention.
+// If the convention is not recognized, it defaults to ActualActual.
+func YearFraction(from, to date.Date, convention Convention) float64 {
+	return memo.YearFraction(from, to, convention)
+}
+
+var memo = &memoizer{
+	cache: expirable.NewLRU[key, float64](1000, nil, time.Second*300),
+}
+
+type key struct {
+	convention Convention
+	from, to   date.Date
+}
+
+type memoizer struct {
+	cache *expirable.LRU[key, float64]
+}
+
+func (m *memoizer) YearFraction(from, to date.Date, convention Convention) float64 {
+	// k := key{convention: convention, from: from, to: to}
+	// yf, found := m.cache.Get(k)
+	//
+	// if found {
+	// 	return yf
+	// }
+	//
+	return NewDayCounter(convention)(from, to)
+	// m.cache.Add(k, yf)
+
+	// return yf
+}
 
 // NewDayCounter returns a DayCounter based on the input convention.
 func NewDayCounter(convention Convention) DayCounter {
@@ -42,13 +77,6 @@ func NewDayCounter(convention Convention) DayCounter {
 	default:
 		return yearFractionActualActual
 	}
-}
-
-// YearFraction returns the year fraction difference between two dates
-// according to the input convention.
-// If the convention is not recognized, it defaults to ActualActual.
-func YearFraction(from, to date.Date, convention Convention) float64 {
-	return NewDayCounter(convention)(from, to)
 }
 
 const (
