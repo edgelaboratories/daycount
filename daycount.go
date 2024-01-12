@@ -76,12 +76,12 @@ func yearFractionActualActualAFB(from, to date.Date) float64 {
 
 	// This function uses backward induction from the later date,
 	// 'from' and 'to' are swapped if 'to' falls before 'from'.
-	alpha := 1.0
+	sign := 1.0
 	if to.Before(from) {
-		alpha = -1.0
+		sign = -1.0
 
 		remaining = from
-		from, to = to, remaining
+		from, to = to, from
 	}
 
 	for tmp := to; tmp.After(from); {
@@ -98,7 +98,7 @@ func yearFractionActualActualAFB(from, to date.Date) float64 {
 		}
 	}
 
-	return alpha * (float64(nbFullYears) + float64(remaining.Sub(from))/computeYearDurationAFB(from, remaining))
+	return sign * (float64(nbFullYears) + float64(remaining.Sub(from))/computeYearDurationAFB(from, remaining))
 }
 
 func computeYearDurationAFB(from, remaining date.Date) float64 {
