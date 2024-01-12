@@ -7,6 +7,9 @@ import (
 
 	"github.com/fxtlabs/date"
 	fuzz "github.com/google/gofuzz"
+	"github.com/leanovate/gopter"
+	"github.com/leanovate/gopter/gen"
+	"github.com/leanovate/gopter/prop"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -286,4 +289,32 @@ func Test_daysPerYear(t *testing.T) {
 
 	assert.InDelta(t, threeSixtyFiveDays, daysPerYear(2015), tol)
 	assert.InDelta(t, threeSixtySixDays, daysPerYear(2000), tol)
+}
+
+func Test_YearFraction_inverted(t *testing.T) {
+	t.Parallel()
+
+	const tol = 1e-10
+
+	props := gopter.NewProperties(gopter.DefaultTestParametersWithSeed(1234))
+
+	initialTime := time.Date(1970, 1, 1, 12, 0, 0, 0, time.UTC)
+	duration := time.Hour * 24 * 365 * 50
+
+	props.Property("year fraction inversion gives opposite sign", prop.ForAll(
+		func(t1, t2 time.Time, conventionInteger int) bool {
+			date1 := date.NewAt(t1)
+			date2 := date.NewAt(t2)
+
+			yf := YearFraction(date1, date2, Convention(conventionInteger))
+			invertedYf := YearFraction(date2, date1, Convention(conventionInteger))
+
+			return assert.InDelta(t, yf, -1.0*invertedYf, tol)
+		},
+		gen.TimeRange(initialTime, duration),
+		gen.TimeRange(initialTime, duration),
+		gen.IntRange(0, 7),
+	))
+
+	props.TestingRun(t)
 }
