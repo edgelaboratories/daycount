@@ -4,7 +4,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/fxtlabs/date"
+	"github.com/edgelaboratories/date"
 )
 
 // DayCounter computes the year fraction between a from and a to date
