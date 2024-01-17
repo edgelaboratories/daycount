@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fxtlabs/date"
+	"github.com/edgelaboratories/date"
 	fuzz "github.com/google/gofuzz"
 	"github.com/leanovate/gopter"
 	"github.com/leanovate/gopter/gen"
