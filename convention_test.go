@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	errors "github.com/edgelaboratories/go-errors/goerror"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -85,6 +86,7 @@ func Test_Parse_UnknownConvention(t *testing.T) {
 
 	_, err := Parse("UnknownConvention")
 	require.Error(t, err)
+	errors.AssertStatus(t, errors.StatusCodeBug, err)
 }
 
 func Test_Convention_UnmarshalJSON(t *testing.T) {

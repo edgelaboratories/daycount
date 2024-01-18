@@ -3,6 +3,8 @@ package daycount
 import (
 	"encoding/json"
 	"fmt"
+
+	errors "github.com/edgelaboratories/go-errors/goerror"
 )
 
 // Convention is the daycounting convention.
@@ -95,7 +97,7 @@ func Parse(convention string) (Convention, error) {
 		return ThirtyThreeSixtyGerman, nil
 
 	default:
-		return -1, fmt.Errorf("unrecognized daycount convention %s", convention)
+		return -1, errors.Bug("unrecognized daycount convention %s", convention)
 	}
 }
 
@@ -108,7 +110,7 @@ func (d *Convention) UnmarshalJSON(b []byte) error {
 
 	res, err := Parse(s)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not parse convention: %w", err)
 	}
 	*d = res
 
