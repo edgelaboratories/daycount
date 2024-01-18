@@ -35,6 +35,9 @@ issues:
         - testpackage
 
 linters-settings:
+  wrapcheck:
+    ignorePackageGlobs:
+      - github.com/edgelaboratories/go-errors/*
   gomodguard:
     blocked:
       modules:
