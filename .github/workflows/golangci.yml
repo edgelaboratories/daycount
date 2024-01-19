@@ -12,9 +12,6 @@ jobs:
         env:
           TOKEN: ${{ secrets.GOLANGCI_SECRET }}
         run: git config --global url."https://edgelab-ci:${TOKEN}@github.com".insteadOf "https://github.com"
-
-      - name: Configure Git
-        run: git config --global url.git@github.com:edgelaboratories/.insteadOf https://github.com/edgelaboratories/
   
       - name: Install Go
         uses: actions/setup-go@v5
