@@ -17,7 +17,6 @@ const epsilon = 1.0e-15
 
 func Test_YearFraction(t *testing.T) {
 	t.Parallel()
-
 	for _, tc := range []struct {
 		from     date.Date
 		to       date.Date
