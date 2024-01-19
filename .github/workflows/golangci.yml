@@ -8,10 +8,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure git for private modules
+      - name: Git config
         env:
+          USER: edgelab-ci
           TOKEN: ${{ secrets.GOLANGCI_SECRET }}
-        run: git config --global url."https://edgelab-ci:${TOKEN}@github.com".insteadOf "https://github.com"
+        run: git config --global url."https://${USER}:${TOKEN}@github.com".insteadOf "ssh://git@github.com"
   
       - name: Install Go
         uses: actions/setup-go@v5
