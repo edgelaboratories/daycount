@@ -1,6 +1,6 @@
 module github.com/edgelaboratories/daycount
 
-go 1.21.6
+go 1.22.0
 
 require (
 	github.com/edgelaboratories/date v1.0.0
