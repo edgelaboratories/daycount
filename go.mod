@@ -6,7 +6,7 @@ require (
 	github.com/edgelaboratories/date v1.0.0
 	github.com/google/gofuzz v1.2.0
 	github.com/leanovate/gopter v0.2.9
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 )
 
 require (
